@@ -1,4 +1,6 @@
 from controllers import home
+from admin.controllers import home as admin_home
+from agent.controllers import home as agent_home, account as agent_account
 
 import webapp2
 
@@ -9,4 +11,10 @@ config['webapp2_extras.sessions'] = {
 
 app = webapp2.WSGIApplication([
                             ('/', home.Index),
+                            
+                            ('/admin/', admin_home.Index),
+                            
+                            ('/agent/', agent_home.Index),
+                            ('/agent/account/login/', agent_account.Login),
+                            
 							], debug=True, config=config)
