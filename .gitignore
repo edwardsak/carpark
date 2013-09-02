@@ -34,10 +34,7 @@ nosetests.xml
 .project
 .pydevproject
 
-# models
-# appservice
-# dataaccess
-models
-appservice
-dataaccess
+# datalayer, sharelib
+datalayer
+sharelib
 .gitignore~
