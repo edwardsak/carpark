@@ -1,0 +1,79 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+<form action="" method="post">
+	<table>
+		<tr>
+			<td>Agent Code:</td>
+			<td>
+				<input type="text" id="code" />
+			</td>
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Ic No:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Phone No:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Email:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Bank:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Bank No:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Account Holder Name:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+	</table>
+	
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+	<br>	
+	<div>
+		<input type="button" id="btnUpdate" value="Update Profile" />
+	</div>
+</form>
+
+	</div>
+</div>
+
+	
+<script type="text/javascript">
+$("#btnCreate").click(function(){
+	window.location = "/agent/buy/create/";
+});
+</script>
+{% endblock %}

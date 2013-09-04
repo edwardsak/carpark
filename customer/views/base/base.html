@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>{% block title %}{{ title }}{% endblock %}</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <!-- Le styles -->
+	<link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/themes/base/jquery.ui.base.css" rel="stylesheet" type="text/css" />
+  	<link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/themes/base/jquery.ui.theme.css" rel="stylesheet" type="text/css" />
+  	<link href="/assets/css/phone.css" rel="stylesheet" />
+	
+	<!-- Bootstrap core CSS -->
+    <link href="/assets/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/assets/css/jumbotron.css" rel="stylesheet">
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+    
+  	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+  	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script src="/assets/js/knockout-2.2.1.js"></script>
+	<script src="/assets/js/utils.js"></script>
+	
+	{% block head_extra %}{% endblock %}
+</head>
+
+<body>
+	{% block menu %}
+	<div class="navbar navbar-inverse navbar-fixed-top">
+    	<div class="container">
+        	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          		<span class="icon-bar"></span>
+          		<span class="icon-bar"></span>
+          		<span class="icon-bar"></span>
+        	</button>
+        	<a class="navbar-brand" href="#">Car Park (LD)</a>
+         	<div class="nav-collapse collapse">
+            	<ul class="nav navbar-nav">
+            		<li><a href="/agent/">Home</a></li>
+            		
+            		<li class="dropdown">
+                    	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile <b class="caret"></b></a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="/agent/account/detail/">Info</a></li>
+  							<li><a href="/agent/account/changepwd/">Change Password</a></li>
+                    	</ul>
+                	</li>
+                	
+                	<li class="dropdown">
+	                	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Transaction <b class="caret"></b></a>
+	                    <ul class="dropdown-menu">
+	                    	<li class="nav-header">Buy</li>
+	                    	<li><a href="/agent/buy/create/">New</a></li>
+	                    	<li><a href="/agent/buy/">List</a></li>
+	                        <li class="divider"></li>
+	                        <li class="nav-header">Register</li>
+	                        <li><a href="/agent/register/create/">New</a></li>
+	                        <li><a href="/agent/register/">List</a></li>
+	                    </ul>
+	                </li>
+	                
+	                <li><a href="/agent/about/">About</a></li>
+            	</ul>
+            	<form class="navbar-form form-inline pull-right">
+            		{% if current_agent %}
+            		<div><span style="color: white;">Welcome, {{ current_agent.name }}!</span>&nbsp;&nbsp;<input type="button" id="btnLogout" class="btn" value="Logout" /></div>
+            		{% else %}
+					<input type="button" id="btnLogin" class="btn" value="Login" />
+					{% endif %}
+            	</form>
+          	</div><!--/.nav-collapse -->
+    	</div>
+	</div>
+	{% endblock %}
+	
+   	<div class="container">
+
+		{% block main %}
+		{% endblock %}
+	
+		{% block footer_hr %}
+		<hr>
+		{% endblock %}
+		
+		<footer>
+			{% block footer %}
+			<p></p>
+	    	{% endblock %}
+	  	</footer>
+   	</div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+	<script src="/assets/js/bootstrap.min.js"></script>
+    {% block foot_extra %}{% endblock %}
+    
+    {% block login_script %}
+    <script type="text/javascript">
+		// login
+  		$("#btnLogin").click(function(e) {
+  			e.originalEvent.preventDefault();
+  			
+  			login();
+  		});
+		
+		function login() {
+			window.location = "/agent/account/login/";
+		}
+  		
+  		// logout
+  		$("#btnLogout").click(function() {
+  			window.location = "/agent/account/logout/";
+  		});
+ 	</script>
+ 	{% endblock %}
+</body>
+</html>

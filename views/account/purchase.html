@@ -1,0 +1,115 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<br>
+<h3> Top Up Account</h3>
+	<div class="col-lg-4", style="float:left; width:50%;"align="left" ">
+	
+	<table>
+		<tr>
+			<td>Agent Code:</td>
+			<td>
+				<input type="text" id="car" />
+			</td>
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>
+				<input type="text" id="newPwd" />
+			</td>
+		</tr>
+		<tr>
+		<td>Payment Method:</td>
+		<td>
+			<label for="mydropdown""></label><select name="mydropdown">
+				<option value="Cash">Cash</option>
+				<option value="Cheque">Cheque</option>
+				<option value="BankIn">Bank In</option>
+			</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td>Amount:</td>
+		<td>
+			<input type="text" id="newPwd" />
+		</td>
+	</tr>
+	<tr>
+		<td>Payment Date:</td>
+		<td>
+			<input type="text" id="confirmPwd" />
+		</td>
+	</tr>
+	<div>
+		<input type="button" id="btnTopup" value="Proceed TopUp" />
+	</div>
+	</table>
+	
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+	<br>	
+	
+	</div>
+		
+
+
+<h3>Order New Tag</h3>
+<div class="col-lg-4, style="float:right; width:50%;"align="right">	
+	<table>
+		<tr>
+			<td>Agent Code:</td>
+			<td>
+				<input type="text" id="car" />
+			</td>
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>
+				<input type="text" id="newPwd" />
+			</td>
+		</tr>
+  	<tr>
+		<td>Quantity:</td>
+		<td>
+			<input type="text" id="confirmPwd" />
+		</td>
+	</tr>
+  	<tr>
+		<td>Payment Method:</td>
+		<td>
+			<label for="mydropdown""></label><select name="mydropdown">
+				<option value="Cash">Cash</option>
+				<option value="Cheque">Cheque</option>
+				<option value="BankIn">Bank In</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>Amount:</td>
+		<td>
+			<input type="text" id="confirmPwd" />
+		</td>
+	</tr>
+	<tr>
+		<td>Payment Date:</td>
+		<td>
+			<input type="text" id="confirmPwd" />
+		</td>
+	</tr>
+	<div>
+		<input type="button" id="btnPurchase" value="Proceed Purchase" />
+	</div>
+	</table>
+	
+</div>
+	
+<script type="text/javascript">
+$("#btnPay").click(function(){
+	
+});
+</script>
+{% endblock %}

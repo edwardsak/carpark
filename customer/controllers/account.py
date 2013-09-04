@@ -1,7 +1,7 @@
 from base import BaseHandler
-from datalayer.models.models import Agent
-from datalayer.viewmodels.viewmodels import AgentViewModel
-from datalayer.appservice.agent.account import AgentAppService
+from datalayer.models.models import Customer
+from datalayer.viewmodels.viewmodels import UserViewModel
+from datalayer.appservice.user import UserAppService
 
 import json
 import os
@@ -14,14 +14,14 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class Login(BaseHandler):
     def get(self):
-        current_agent = self.current_agent()
+        current_user = self.current_user()
         
-        if current_agent is not None:
+        if current_user is not None:
             self.redirect('/agent/')
             
         template_values = {
                            'title': 'Login',
-                           'current_agent': current_agent
+                           'current_user': current_user
                            }
         
         template = JINJA_ENVIRONMENT.get_template('account/login.html')
@@ -40,11 +40,11 @@ class Login(BaseHandler):
             if pwd is None:
                 raise Exception('You must enter a Password.')
             
-            vm = AgentViewModel()
+            vm = UserViewModel()
             vm.code = code
             vm.pwd = pwd
             
-            app_service = AgentAppService()
+            app_service = UserAppService()
             app_service.login(vm)
             
             # save to session
@@ -60,24 +60,24 @@ class Login(BaseHandler):
              
 class Logout(BaseHandler):
     def get(self):
-        if self.session.get('agent_code'):
-            del self.session['agent_code']
+        if self.session.get('user_code'):
+            del self.session['user_code']
         
-        self.redirect("/agent/account/login")
+        self.redirect("/customer/account/login")
         
 class Index(BaseHandler):
     def get(self):
-        current_agent = self.current_agent()
+        current_user = self.current_user()
         
-        if current_agent is not None:
+        if current_user is not None:
             self.redirect('/agent/')
         
-        agent = Agent.query().fetch()
+        customer = Customer.query().fetch()
    
         template_values = {
                            'title': 'Update Profile',
                            #'current_agent': current_agent
-                           'agent': agent
+                           'customer': customer
                            }
         
         template = JINJA_ENVIRONMENT.get_template('account/index.html')
@@ -88,14 +88,14 @@ class ChangePwd(BaseHandler):
         #agent = Agent.query(Agent.pwd==pwd).get()
         
         template_values = {
-                           'title': 'Change Password!',
+                           'title': 'Update Agent Password!',
                            #'agent': agent
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/changePwd.html')
         self.response.write(template.render(template_values))
         
-class Purchase(BaseHandler):
+class History(BaseHandler):
     def get(self):       
         #agent = Agent.query(Agent.pwd==pwd).get()
         
@@ -105,16 +105,4 @@ class Purchase(BaseHandler):
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/purchase.html')
-        self.response.write(template.render(template_values))
-        
-class History(BaseHandler):
-    def get(self):       
-        #agent = Agent.query(Agent.pwd==pwd).get()
-        
-        template_values = {
-                           'title': 'Transaction History',
-                           #'agent': agent
-                           } 
-        
-        template = JINJA_ENVIRONMENT.get_template('account/transHistory.html')
         self.response.write(template.render(template_values))
