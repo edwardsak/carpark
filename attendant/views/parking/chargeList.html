@@ -10,9 +10,15 @@
 			<form action="" method="post">
 			<table>
 			<tr>
-				<td>Date:</td>
+				<td>Date From:</td>
 				<td>
-					<input type="text" id="date" />
+					<input type="text" id="dateFrm" />
+				</td>
+			</tr>
+			<tr>
+				<td>Date To:</td>
+				<td>
+					<input type="text" id="dateTo" />
 				</td>
 			</tr>
 			<tr>
@@ -39,17 +45,12 @@
 					  <tr>
 					  	<th>Date</th>
 					  	<th>Doc No</th>
-					    <th>Car Plate</th>
-					    <th>Name</th>
-					    <th>Ic No</th>
-					    <th>Hp</th>
-					    <th>Email</th>
-					    <th>Address</th>
-					    <th>Tag No</th>
+					  	<th>Lot No</th>
+					    <th>Car Reg. No</th>
 					    <th>Amount (RM)</th>
 					  </tr>
 					 </thead>
-					 <tbody data-bind="template: { name: 'agentTemplate', foreach: lineItems }"></tbody>
+					 <tbody data-bind="template: { name: 'attendantTemplate', foreach: lineItems }"></tbody>
 				</table>	
 			</form>
 		</div>
@@ -66,7 +67,14 @@
 
 <script>
   	$(function() {
-    	$( "#date" ).datepicker({
+    	$( "#dateFrm" ).datepicker({
+    	    dateFormat: 'dd-mm-yy',
+    	    altField: '#thealtdate',
+    	    altFormat: 'yy-mm-dd'
+    	});
+  	});
+  	$(function() {
+    	$( "#dateTo" ).datepicker({
     	    dateFormat: 'dd-mm-yy',
     	    altField: '#thealtdate',
     	    altFormat: 'yy-mm-dd'

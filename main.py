@@ -1,6 +1,7 @@
 from controllers import home
 from admin.controllers import home as admin_home
 from agent.controllers import home as agent_home, account as agent_account, buy as agent_buy
+from attendant.controllers import home as attendant_home, account as attendant_account, parking as attendant_parking
 
 import webapp2
 
@@ -28,5 +29,13 @@ app = webapp2.WSGIApplication([
                             ('/agent/buy/deposit/list/', agent_buy.DepositList),
                             ('/agent/buy/topup/', agent_buy.Topup),
                             ('/agent/buy/topup/list/', agent_buy.TopupList),
+                            
+                            ('/attendant/', attendant_home.Index),
+                            ('/attendant/about/', attendant_home.About),
+                            ('/attendant/account/', attendant_account.Index),
+                            ('/attendant/account/login/', attendant_account.Login),
+                            ('/attendant/account/changePwd/', attendant_account.ChangePwd),
+                            ('/attendant/parking/charge/', attendant_parking.Charge),
+                            ('/attendant/parking/charge/list/', attendant_parking.ChargeList),
                             
 							], debug=True, config=config)

@@ -1,0 +1,78 @@
+{% extends "base/base.html" %}
+
+{% block menu %}{% endblock %}
+{% block login_script %}{% endblock %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+		<form action="" method="post">
+			<table>
+				<tr>
+					<td>Attendant ID:</td>
+					<td>
+						<input type="text" id="code" />
+					</td>
+				</tr>
+				<tr>
+					<td>Password:</td>
+					<td>
+						<input type="password" id="pwd" />
+					</td>
+				</tr>
+			</table>
+			
+			<div>
+		   		<span id="errorMessage" class="error"></span>
+		   	</div>
+			<br>	
+			<div>
+				<input type="button" id="btnLogin" value="Login" />
+			</div>
+		</form>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+	$("#btnLogin").click(function() {
+		login();
+	});
+	
+	function login() {
+		// validate code
+		var code = $("#code").val();
+		if (code.length <= 0) {
+			$("#errorMessage").text("You must enter an User ID.");
+			return;
+		}
+		
+		var postData = {
+			code: code,
+			pwd: $("#pwd").val()
+		};
+		
+		$.post("/attendant/account/login/", postData, function(data, textResult) {
+			loginComplete(data);
+		});
+	}
+	
+	function loginComplete(data) {
+		result = JSON.parse(data);
+		
+		if (result.returnStatus == true){
+			self.location = "/attendant/";
+		}
+		else{
+			$("#errorMessage").text(result.returnMessage);
+		}
+	}
+	
+	$(document).ready(function() {
+		$("#code").focus();
+	});
+</script>
+{% endblock %}
