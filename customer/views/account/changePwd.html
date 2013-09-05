@@ -1,0 +1,49 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+	<form action="" method="post">
+		<table>
+			<tr>
+				<td>Old Password:</td>
+				<td>
+					<input type="text" id="code" />
+				</td>
+			</tr>
+			<tr>
+				<td>New Password:</td>
+				<td>
+					<input type="password" id="newPwd" />
+				</td>
+			</tr>
+			<tr>
+				<td>Confirm Password:</td>
+				<td>
+					<input type="password" id="confirmPwd" />
+				</td>
+			</tr>
+		</table>
+		
+		<div>
+	   		<span id="errorMessage" class="error"></span>
+	   	</div>
+		<br>	
+		<div>
+			<input type="button" id="btnChange" value="Change Password" />
+		</div>
+	</form>
+
+	</div>
+</div>
+
+	
+<script type="text/javascript">
+$("#btnCreate").click(function(){
+	//window.location = "/agent/buy/create/";
+});
+</script>
+{% endblock %}

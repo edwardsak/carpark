@@ -2,6 +2,7 @@ from controllers import home
 from admin.controllers import home as admin_home
 from agent.controllers import home as agent_home, account as agent_account, buy as agent_buy
 from attendant.controllers import home as attendant_home, account as attendant_account, parking as attendant_parking
+from customer.controllers import home as customer_home, account as customer_account
 
 import webapp2
 
@@ -37,5 +38,11 @@ app = webapp2.WSGIApplication([
                             ('/attendant/account/changePwd/', attendant_account.ChangePwd),
                             ('/attendant/parking/charge/', attendant_parking.Charge),
                             ('/attendant/parking/charge/list/', attendant_parking.ChargeList),
+                            
+                            ('/customer/', customer_home.Index),
+                            ('/customer/about/', customer_home.About),
+                            ('/customer/account/', customer_account.Index),
+                            ('/customer/account/login/', customer_account.Login),
+                            ('/customer/account/changePwd/', customer_account.ChangePwd),
                             
 							], debug=True, config=config)

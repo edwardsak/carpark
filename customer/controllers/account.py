@@ -14,14 +14,14 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class Login(BaseHandler):
     def get(self):
-        current_user = self.current_user()
+        current_customer = self.current_customer()
         
-        if current_user is not None:
-            self.redirect('/agent/')
+        if current_customer is not None:
+            self.redirect('/customer/')
             
         template_values = {
                            'title': 'Login',
-                           'current_user': current_user
+                           'current_customer': current_customer
                            }
         
         template = JINJA_ENVIRONMENT.get_template('account/login.html')
@@ -35,7 +35,7 @@ class Login(BaseHandler):
             pwd = self.request.get('pwd')
             
             if code is None:
-                raise Exception('You must enter an Agent ID.')
+                raise Exception('You must enter an Customer ID.')
             
             if pwd is None:
                 raise Exception('You must enter a Password.')
@@ -48,7 +48,7 @@ class Login(BaseHandler):
             app_service.login(vm)
             
             # save to session
-            self.session['agent_code'] = vm.code
+            self.session['customer_code'] = vm.code
             
             json_values['returnStatus'] = True
         except Exception, ex:
@@ -60,36 +60,37 @@ class Login(BaseHandler):
              
 class Logout(BaseHandler):
     def get(self):
-        if self.session.get('user_code'):
-            del self.session['user_code']
+        if self.session.get('customer_code'):
+            del self.session['customer_code']
         
         self.redirect("/customer/account/login")
         
-class Index(BaseHandler):
+class Index(BaseHandler):       
     def get(self):
-        current_user = self.current_user()
+        current_customer = self.current_customer()
         
-        if current_user is not None:
-            self.redirect('/agent/')
+        if current_customer is not None:
+            self.redirect('/customer/')
         
         customer = Customer.query().fetch()
    
         template_values = {
                            'title': 'Update Profile',
-                           #'current_agent': current_agent
+                           #'current_customer': current_customer
                            'customer': customer
                            }
         
         template = JINJA_ENVIRONMENT.get_template('account/index.html')
         self.response.write(template.render(template_values))
 
+
 class ChangePwd(BaseHandler):
     def get(self):       
-        #agent = Agent.query(Agent.pwd==pwd).get()
+        #customer = Customer.query(Customer.pwd==pwd).get()
         
         template_values = {
-                           'title': 'Update Agent Password!',
-                           #'agent': agent
+                           'title': 'Update Customer Password!',
+                           #'customer': customer
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/changePwd.html')
@@ -97,11 +98,11 @@ class ChangePwd(BaseHandler):
         
 class History(BaseHandler):
     def get(self):       
-        #agent = Agent.query(Agent.pwd==pwd).get()
+        #customer = Customer.query(Customer.pwd==pwd).get()
         
         template_values = {
-                           'title': 'Agent Purchasing Info!',
-                           #'agent': agent
+                           'title': 'Customer Purchasing Info!',
+                           #'customer': customer
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/purchase.html')
