@@ -92,5 +92,5 @@ class ChangePwd(BaseHandler):
                            #'attendant': attendant
                            } 
         
-        template = JINJA_ENVIRONMENT.get_template('account/changePwd.html')
+        template = JINJA_ENVIRONMENT.get_template('account/changepwd.html')
         self.response.write(template.render(template_values))

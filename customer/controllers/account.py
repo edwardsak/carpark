@@ -93,17 +93,6 @@ class ChangePwd(BaseHandler):
                            #'customer': customer
                            } 
         
-        template = JINJA_ENVIRONMENT.get_template('account/changePwd.html')
+        template = JINJA_ENVIRONMENT.get_template('account/changepwd.html')
         self.response.write(template.render(template_values))
         
-class History(BaseHandler):
-    def get(self):       
-        #customer = Customer.query(Customer.pwd==pwd).get()
-        
-        template_values = {
-                           'title': 'Customer Purchasing Info!',
-                           #'customer': customer
-                           } 
-        
-        template = JINJA_ENVIRONMENT.get_template('account/purchase.html')
-        self.response.write(template.render(template_values))

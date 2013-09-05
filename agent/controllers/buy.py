@@ -60,7 +60,7 @@ class TagList(BaseHandler):
                            #'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('buy/tagList.html')
+        template = JINJA_ENVIRONMENT.get_template('buy/taglist.html')
         self.response.write(template.render(template_values))
    
 class Deposit(BaseHandler):
@@ -96,7 +96,7 @@ class DepositList(BaseHandler):
                            #'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('buy/depositList.html')
+        template = JINJA_ENVIRONMENT.get_template('buy/depositlist.html')
         self.response.write(template.render(template_values))
         
 class Create(BaseHandler):
@@ -132,7 +132,7 @@ class CreateList(BaseHandler):
                            #'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('buy/createList.html')
+        template = JINJA_ENVIRONMENT.get_template('buy/createlist.html')
         self.response.write(template.render(template_values))
 
 class Topup(BaseHandler):
@@ -168,5 +168,5 @@ class TopupList(BaseHandler):
                            #'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('buy/topupList.html')
+        template = JINJA_ENVIRONMENT.get_template('buy/topuplist.html')
         self.response.write(template.render(template_values))

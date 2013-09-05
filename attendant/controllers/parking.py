@@ -42,5 +42,5 @@ class ChargeList(BaseHandler):
                            #'current_attendant': current_attendant
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('parking/chargeList.html')
+        template = JINJA_ENVIRONMENT.get_template('parking/chargelist.html')
         self.response.write(template.render(template_values))

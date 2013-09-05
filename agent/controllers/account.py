@@ -92,29 +92,6 @@ class ChangePwd(BaseHandler):
                            #'agent': agent
                            } 
         
-        template = JINJA_ENVIRONMENT.get_template('account/changePwd.html')
+        template = JINJA_ENVIRONMENT.get_template('account/changepwd.html')
         self.response.write(template.render(template_values))
         
-class Purchase(BaseHandler):
-    def get(self):       
-        #agent = Agent.query(Agent.pwd==pwd).get()
-        
-        template_values = {
-                           'title': 'Agent Purchasing Info!',
-                           #'agent': agent
-                           } 
-        
-        template = JINJA_ENVIRONMENT.get_template('account/purchase.html')
-        self.response.write(template.render(template_values))
-        
-class History(BaseHandler):
-    def get(self):       
-        #agent = Agent.query(Agent.pwd==pwd).get()
-        
-        template_values = {
-                           'title': 'Transaction History',
-                           #'agent': agent
-                           } 
-        
-        template = JINJA_ENVIRONMENT.get_template('account/transHistory.html')
-        self.response.write(template.render(template_values))
