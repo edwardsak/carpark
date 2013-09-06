@@ -1,0 +1,74 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+<form action="" method="post">
+	<table>
+		<tr>
+			<td>User Code:</td>
+			<td>
+				<input type="text" id="code" />
+			</td>
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>
+				<input type="text" id="name" />
+			</td>
+		</tr>
+		<tr>
+			<td>Password:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Level:</td>
+			<td>
+				<input type="text" id="level" />
+			</td>
+		</tr>
+	</table>
+	
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+	<br>	
+	<div>
+		<input type="button" id="btnCreate" value="Create User" />
+	</div>
+</form>
+
+	</div>
+</div>
+
+	
+<script type="text/javascript">
+$("#btnCreate").click(function(){
+	//window.location = "/attendant/create/";
+	
+	var postData = {
+			code: $("#code").val(),
+			name: $("#name").val(),
+			pwd: $("#pwd").val(),
+			level: $("#level").val(),
+	};
+	
+	$.post("/signup/createuser/", postData, function(data, textResult){
+			jsonData = JSON.parse(data);
+			
+			if(jsonData.returnResult){
+				//$("errorMessage"),text(jsonData.errorMsg)
+			}
+			else{
+				window.location = "/admin/signup/createuserlist/";
+			}
+	});
+
+});
+</script>
+{% endblock %}

@@ -1,7 +1,7 @@
-from base import BaseHandler
-from datalayer.models.models import Customer
+from admin.controllers.base import BaseHandler
+from datalayer.models.models import User
 from datalayer.viewmodels.viewmodels import UserViewModel
-#from datalayer.appservice.user import UserAppService
+from datalayer.appservice.admin.account import AccountAppService
 
 import json
 import os
@@ -14,14 +14,14 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class Login(BaseHandler):
     def get(self):
-        current_customer = self.current_customer()
+        current_user = self.current_user()
         
-        if current_customer is not None:
-            self.redirect('/customer/')
+        if current_user is not None:
+            self.redirect('/admin/')
             
         template_values = {
                            'title': 'Login',
-                           'current_customer': current_customer
+                           'current_user': current_user
                            }
         
         template = JINJA_ENVIRONMENT.get_template('account/login.html')
@@ -35,7 +35,7 @@ class Login(BaseHandler):
             pwd = self.request.get('pwd')
             
             if code is None:
-                raise Exception('You must enter an Customer ID.')
+                raise Exception('You must enter an Admin ID.')
             
             if pwd is None:
                 raise Exception('You must enter a Password.')
@@ -44,11 +44,11 @@ class Login(BaseHandler):
             vm.code = code
             vm.pwd = pwd
             
-            #app_service = UserAppService()
-            #app_service.login(vm)
+            app_service = AccountAppService()
+            app_service.login(vm)
             
             # save to session
-            self.session['customer_code'] = vm.code
+            self.session['user_code'] = vm.code
             
             json_values['returnStatus'] = True
         except Exception, ex:
@@ -59,38 +59,37 @@ class Login(BaseHandler):
         self.response.out.write(jsonStr);
              
 class Logout(BaseHandler):
+    def post(self):
+        if self.session.get('user_code'):
+            del self.session['user_code']
+            
+        self.response.out.write("");
+        
+class Index(BaseHandler):
     def get(self):
-        if self.session.get('customer_code'):
-            del self.session['customer_code']
+        current_user = self.current_user()
         
-        self.redirect("/customer/account/login")
+        if current_user is not None:
+            self.redirect('/admin/')
         
-class Index(BaseHandler):       
-    def get(self):
-        current_customer = self.current_customer()
-        
-        if current_customer is not None:
-            self.redirect('/customer/')
-        
-        customer = Customer.query().fetch()
+        user = User.query().fetch()
    
         template_values = {
                            'title': 'Update Profile',
-                           #'current_customer': current_customer
-                           'customer': customer
+                           #'current_user': current_user
+                           'user': user
                            }
         
         template = JINJA_ENVIRONMENT.get_template('account/index.html')
         self.response.write(template.render(template_values))
 
-
 class ChangePwd(BaseHandler):
     def get(self):       
-        #customer = Customer.query(Customer.pwd==pwd).get()
+        #user = User.query(User.pwd==pwd).get()
         
         template_values = {
-                           'title': 'Update Customer Password!',
-                           #'customer': customer
+                           'title': 'Change Password!',
+                           #'user': user
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/changepwd.html')

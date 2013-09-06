@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+<form action="" method="post">
+	<table>
+		<tr>
+			<td>User Code:</td>
+			<td>
+				<input type="text" id="code" />
+			</td>
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>
+				<input type="text" id="name" />
+			</td>
+		</tr>
+		<tr>
+			<td>Password:</td>
+			<td>
+				<input type="text" id="pwd" />
+			</td>
+		</tr>
+		<tr>
+			<td>Level:</td>
+			<td>
+				<select id="level">
+        		<option value="1">1</option>
+        		<option value="2">2</option>
+        		<option value="3">3</option>
+    			</select>
+			</td>
+		</tr>
+	</table>
+	
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+	<br>	
+	<div>
+		<input type="button" id="btnCreate" value="Create User" />
+	</div>
+</form>
+
+	</div>
+</div>
+
+	
+<script type="text/javascript">
+	$("#btnCreate").click(function(){
+		var postData = {
+				code: $("#code").val(),
+				name: $("#name").val(),
+				pwd: $("#pwd").val(),
+				level: $("#level").val(),
+		};
+		
+		$.post("/admin/user/create/", postData, function(data, textResult){
+			jsonData = JSON.parse(data);
+				
+			if(jsonData.returnStatus){
+				window.location = "/admin/user/";
+			}
+			else{
+				$("#errorMessage").text(jsonData.returnMessage);
+			}
+		});
+	
+	});
+</script>
+{% endblock %}
