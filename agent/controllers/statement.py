@@ -2,7 +2,7 @@ from agent.controllers.base import BaseHandler
 from sharelib.utils import DateTime
 from datalayer.models.models import Agent
 from datalayer.viewmodels.viewmodels import AgentViewModel
-from datalayer.appservice.agent.account import AgentAppService
+from datalayer.appservice.agent.account import AccountAppService
 
 import os
 import jinja2
