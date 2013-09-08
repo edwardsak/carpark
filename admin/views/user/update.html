@@ -7,9 +7,10 @@
 	<div class="col-lg-4">
 	
 <form action="" method="post">
+	<input type="hidden" id="lastModified" value="{{ user.last_modified }}"/>
 	<table>
 		<tr>
-			<td>User Code:</td>
+			<td>User ID:</td>
 			<td>
 				<span>{{ user.code }}</span>
 			</td>
@@ -21,15 +22,20 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Password:</td>
+			<td>Level:</td>
 			<td>
-				<input type="text" id="pwd" value="{{ user.pwd }}" />
+				<select id="level" value="{{ user.level }}">
+        		<option value="2">Super User</option>
+        		<option value="3">Limited User</option>
+        		<option value="4">Manager</option>
+        		<option value="5">Accountant</option>
+    			</select>
 			</td>
 		</tr>
 		<tr>
-			<td>Level:</td>
+			<td>Active:</td>
 			<td>
-				<input type="text" id="level" value="{{ user.level }}" />
+				<input type="checkbox" id="active" name="active" value="true"> I'm active user<br>
 			</td>
 		</tr>
 	</table>
@@ -50,18 +56,25 @@
 $("#btnSave").click(function(){
 	var postData = {
 			name: $("#name").val(),
-			pwd: $("#pwd").val(),
-			level: $("#level").val()
+			level: $("#level").val(),
+			
+			//After submitting the form check it with:
+			//if jQuery('#checkbox').is(':checked'){
+				//active: "True";
+			//}
+			//else{
+				//active: "False";
+			//}
 	};
 	
-	$.post("/admin/user/update/{{ user.code }}", postData, function(data, textResult) {
+	$.post("/admin/user/update/{{ user.code }}/", postData, function(data, textResult) {
 		jsonData = JSON.parse(data);
 		
 		if (jsonData.returnStatus) {
 			window.location = "/admin/user/";
 		}
 		else {
-			$("errorMessage").text(jsonData.returnMessage);
+			$("#errorMessage").text(jsonData.returnMessage);
 		}
 	});
 });

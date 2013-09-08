@@ -1,8 +1,10 @@
-from admin.controllers.base import BaseHandler
+from agent.controllers.base import BaseHandler
 from sharelib.utils import DateTime
 from datalayer.models.models import Agent
-from datalayer.viewmodels.viewmodels import AgentViewModel
-from datalayer.appservice.admin.agent import AgentAppService
+from datalayer.models.models import Register
+from datalayer.viewmodels.viewmodels import RegisterViewModel
+from datalayer.appservice.agent.register import RegisterAppService
+
 
 import os
 import jinja2
@@ -15,49 +17,53 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class Create(BaseHandler):
     def get(self):
-        # validate admin is logined or not
+        # validate agent is logined or not
         # if not redirect to login page
         if self.authenticate() == False:
             return
         
-        current_user = self.current_user()
+        current_agent = self.current_agent()
         
         template_values = {
-                           'title': 'Create Agent',
+                           'title': 'Register',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_user': current_user
+                           'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('/agent/create.html')
+        template = JINJA_ENVIRONMENT.get_template('register/create.html')
         self.response.write(template.render(template_values))
         
     def post(self):
         json_values = {}
         
         try:
+            agent_code = self.session['agent_code']
+            
             # get post data
+            date = DateTime.to_date(self.request.get("date"))
+            carPlate = self.request.get("carPlate")
             name = self.request.get("name")
-            code = self.request.get("code")
-            pwd = self.request.get("pwd")
+            ic = self.request.get("ic")
             address = self.request.get("address")
             tel = self.request.get("tel")
             hp = self.request.get("hp")
             email = self.request.get("email")
-            bal_amt = self.request.get("balAmt")
+            tagNo = self.request.get("tagNo")
     
             #save data to view model class
-            vm = AgentViewModel()
-            vm.code = code
-            vm.name = name
-            vm.pwd = pwd
-            vm.address = address
-            vm.tel = tel
-            vm.hp = hp
-            vm.email = email
-            vm.bal_amt = bal_amt
-            vm.active = True
-                
-            app_service = AgentAppService()
+            vm = RegisterViewModel()
+            vm.tran_date = date
+            vm.agent_code = agent_code
+            vm.car_reg_no = carPlate
+            vm.car_name = name
+            vm.car_ic = ic
+            vm.car_address = address
+            vm.car_tel = tel
+            vm.car_hp = hp
+            vm.car_email = email
+            vm.tag_code = tagNo
+      
+            app_service = RegisterAppService()
             app_service.create(vm)
             
             json_values['returnStatus'] = True
@@ -67,28 +73,25 @@ class Create(BaseHandler):
             
         json_str = json.dumps(json_values)
         self.response.out.write(json_str)
-
+        
 class Index(BaseHandler):
     def get(self):
-        # validate admin is logined or not
+        # validate agent is logined or not
         # if not redirect to login page
         if self.authenticate() == False:
             return
         
-        current_user = self.current_user()
-        
-        agents = Agent.query().fetch()
+        current_agent = self.current_agent()
         
         template_values = {
-                           'title': 'Agent List',
+                           'title': 'Register List',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_user': current_user,
-                           'agents': agents
+                           'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('agent/index.html')
+        template = JINJA_ENVIRONMENT.get_template('register/index.html')
         self.response.write(template.render(template_values))
-        
+
 class Update(BaseHandler):
     def get(self, code):
         # validate admin is logined or not
@@ -96,18 +99,17 @@ class Update(BaseHandler):
         if self.authenticate() == False:
             return
         
-        current_user = self.current_user()
+        current_agent = self.current_agent()
         
         agent = Agent.query(Agent.code==code).get()
         
         template_values = {
-                           'title': 'Update Agent',
-                           'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_user': current_user,
+                           'title': 'Update Profile',
+                           'current_agent': current_agent,
                            'agent': agent
-                           }
+                           } 
         
-        template = JINJA_ENVIRONMENT.get_template('agent/update.html')
+        template = JINJA_ENVIRONMENT.get_template('account/update.html')
         self.response.write(template.render(template_values))
         
     def post(self, code):
@@ -115,26 +117,26 @@ class Update(BaseHandler):
         
         try:
             name = self.request.get('name')
-            address = self.request.get("address")
-            tel = self.request.get("tel")
-            hp = self.request.get("hp")
-            email = self.request.get("email")
+            address = self.request.get('address')
+            tel = self.request.get('tel')
+            hp = self.request.get('hp')
+            email = self.request.get('email')
             last_modified = self.request.get('lastModified')
             
-            current_user = self.current_user()
+            agent = Agent.query(Agent.code==code).get()
             
-            vm = AgentViewModel()
+            vm = RegisterViewModel()
             vm.code = code
             vm.name = name
             vm.address = address
             vm.tel = tel
             vm.hp = hp
             vm.email = email
+            vm.account_type = agent.account_type
             vm.active = True
             vm.last_modified = last_modified
-            vm.user_code = current_user.code
             
-            app_service = AgentAppService()
+            app_service = RegisterAppService()
             app_service.update(vm)
         
             json_values['returnStatus'] = True
@@ -144,32 +146,45 @@ class Update(BaseHandler):
         
         json_str = json.dumps(json_values)
         self.response.out.write(json_str);
-
+        
 class Search(BaseHandler):
     def post(self):
-        name = self.request.get('name')
-        code = self.request.get("code")
+        carPlate = self.request.get('carPlate')
+        name = self.request.get("name")
+        ic = self.request.get("ic")
+        current_agent = self.current_agent()
+        code = current_agent.code
         
-        q = Agent.query()
+        q = Register.query()
         
+        if carPlate:
+            q = q.filter(Register.car_reg_no==carPlate)
+            
         if name:
-            q = q.filter(Agent.name==name)
+            q = q.filter(Register.car_name==name)
+            
+        if ic:
+            q = q.filter(Register.car_ic==ic)
             
         if code:
-            q = q.filter(Agent.code==code)
+            q = q.filter(Register.agent_code==code)
             
-        agents = q.fetch()
+        registers = q.fetch()
         
         # create json
         data = []
-        for agent in agents:
+        for register in registers:
             data.append({
-                         'code':agent.code,
-                         'name': agent.name,
-                         'address': agent.address,
-                         'tel': agent.tel,
-                         'hp': agent.hp,
-                         'email': agent.email,
+                         #'date': register.tran_date,
+                         'code': register.agent_code,
+                         'carPlate': register.car_reg_no,
+                         'name': register.car_name,
+                         'ic': register.car_ic,
+                         'address': register.car_address,
+                         'tel': register.car_tel,
+                         'hp': register.car_hp,
+                         'email': register.car_email,
+                         'tagNo': register.tag_code
                          })
             
         json_values = {

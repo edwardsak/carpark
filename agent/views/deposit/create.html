@@ -8,21 +8,21 @@
 	
 	<table>
 		<tr>
-			<td>Date Time:</td>
+			<td>Date:</td>
 			<td>
-				<span id="date" name="date" />{{ today }}</span>
+				<span id="date" />{{ today }}</span>
 			</td>
 		</tr>
 		<tr>
 			<td>Amount (RM):</td>
 			<td>
-				<input type="text" id="amount" />
+				<input type="text" id="amt" />
 			</td>
 		</tr>
 		<tr>
 			<td>Payment Date:</td>
 			<td>
-				<input type="text" id="datepicker" />
+				<input type="text" id="paymentDate" />
 			</td>
 		</tr>
 		<tr>
@@ -48,19 +48,36 @@
 	
 	</div> <!-- /classrow -->
 		
-<script>
-  	$(function() {
-    	$( "#datepicker" ).datepicker({
-    	    dateFormat: 'dd-mm-yy',
-    	    altField: '#thealtdate',
-    	    altFormat: 'yy-mm-dd'
-    	});
-  	});
-</script>
 
 <script type="text/javascript">
-$("#btnSave").click(function(){
+$(function() {
+	$( "#paymentDate" ).datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    altField: '#thealtdate',
+	    altFormat: 'yy-mm-dd'
+	});
+	});
 	
+$("#btnSave").click(function(){
+	var postData = {
+			date: $("#date").text(),
+			amount: $("#amt").val(),
+			refNo: $("#refNo").val(),
+			paymentDate: $("#paymentDate").val(),
+			
+	};
+	
+	$.post("/agent/deposit/create/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/agent/deposit/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
 });
 </script>
 {% endblock %}

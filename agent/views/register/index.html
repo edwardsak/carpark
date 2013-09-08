@@ -10,9 +10,9 @@
 			<form action="" method="post">
 			<table>
 			<tr>
-				<td>Agent ID:</td>
+				<td>Car Plate:</td>
 				<td>
-					<input type="text" id="code" />
+					<input type="text" id="carPlate" />
 				</td>
 			</tr>
 			<tr>
@@ -21,12 +21,21 @@
 					<input type="text" id="name" />
 				</td>
 			</tr>
+			<tr>
+				<td>Ic:</td>
+				<td>
+					<input type="text" id="ic" />
+				</td>
+			</tr>
 			</table>
 			<div>
 		   		<span id="errorMessage" class="error"></span>
 		   	</div>
-			<div>
-				<input type="button" id="btnSearch" value="Search" />
+			<div style="display: inline;">
+				<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
+			</div>
+			<div style="display: inline;">
+				<input type="button" id="btnBuy" value="Buy" style="width:90px;height:40px; font-size: 20px;"/>
 			</div>
 			</form>
 		</div>
@@ -37,34 +46,39 @@
 				<table border="1">
 					<thead>
 					  <tr>
-					  	<th>Agent ID</th>
-					  	<th>Name</th>
-					  	<th>Address</th>
+					  	<th>Date</th>
+					  	<th>Car Palte</th>
+					    <th>Name</th>
+					    <th>Ic</th>
+					    <th>Address</th>
 					    <th>Tel</th>
 					    <th>Hp</th>
 					    <th>Email</th>
+					    <th>Tag No</th>
 					  </tr>
 					 </thead>
-					 <tbody data-bind="template: { name: 'adminTemplate', foreach: lineItems }"></tbody>
+					 <tbody data-bind="template: { name: 'agentTemplate', foreach: lineItems }"></tbody>
 				</table>	
 			</form>
-			
-			<input type="button" id="btnCreate" value="Create" />
 
-			<script type="text/html" id="adminTemplate">
+			<script type="text/html" id="agentTemplate">
 				<tr>
-    			<td><a data-bind="text: code, attr: { href: urlUpdate, title: code }"></a></td>
-    			<td><span data-bind="text: name"></span></td>
-    			<td><span data-bind="text: address"></span></td>
+				<td><span data-bind="text: code"></span></td>
+				<td><span data-bind="text: date"></span></td>
+    			<td><span data-bind="text: carPlate"></span></td>
+				<td><span data-bind="text: name"></span></td>
+				<td><span data-bind="text: ic"></span></td>
+				<td><span data-bind="text: address"></span></td>
 				<td><span data-bind="text: tel"></span></td>
 				<td><span data-bind="text: hp"></span></td>
 				<td><span data-bind="text: email"></span></td>
+				<td><span data-bind="text: tagNo"></span></td>
   				</tr>
 			</script>
 			
 			<script type="text/javascript">
-			$("#btnCreate").click(function(){
-				window.location = "/admin/agent/create/";
+			$("#btnBuy").click(function(){
+				window.location = "/agent/register/create/";
 			});
 			
 			// search
@@ -76,21 +90,18 @@
 				self.addLineItem = function(dataRow) {
 					var lineItemDisplay = new LineItemDisplay();
 					lineItemDisplay.code = ko.observable(dataRow.code);
+					lineItemDisplay.date = ko.observable(dataRow.date);
+					lineItemDisplay.carPlate = ko.observable(dataRow.carPlate);
 					lineItemDisplay.name = ko.observable(dataRow.name);
+					lineItemDisplay.ic = ko.observable(dataRow.ic);
 					lineItemDisplay.address = ko.observable(dataRow.address);
 					lineItemDisplay.tel = ko.observable(dataRow.tel);
 					lineItemDisplay.hp = ko.observable(dataRow.hp);
 					lineItemDisplay.email = ko.observable(dataRow.email);
-					lineItemDisplay.urlUpdate = ko.observable("/admin/agent/update/" + dataRow.code + "/");
+					lineItemDisplay.tagNo = ko.observable(dataRow.tagNo);
 					
 					self.lineItems.push(lineItemDisplay)
 					}
-				
-				self.deleteLineItem = function(currentLineItem) {
-					var postData = {
-						code: currentLineItem.code()
-					};
-				};
 			}
 			var vm = new viewModel();
 			
@@ -100,13 +111,15 @@
 				var self = this;
 				
 				self.code;
+				self.date;
+				self.carPlate;
 				self.name;
+				self.ic;
 				self.address;
 				self.tel;
 				self.hp;
 				self.email;
-				self.bal_amt
-				self.urlUpdate;
+				self.tagNo;
 			};
 			
 			$("#btnSearch").click(function() {
@@ -115,15 +128,16 @@
 			
 			function search() {
 				var postData = {
-						code: $("#code").val(),
-						name: $("#name").val()
+						carPlate: $("#carPlate").val(),
+						name: $("#name").val(),
+						ic: $("ic").val()
 				};
 				
-				$.post("/admin/agent/search/", postData, function(data, textResult){
+				$.post("/agent/register/search/", postData, function(data, textResult){
 						jsonData = JSON.parse(data);
 						
 						if(jsonData.returnResult){
-							//$("errorMessage"),text(jsonData.errorMsg)
+							$("#errorMessage"),text(jsonData.errorMsg)
 						}
 						else{
 							// jason data
@@ -137,6 +151,7 @@
 				});
 			}
 			</script>
+			
 			
 		</div>
 	</div> <!-- /row -->

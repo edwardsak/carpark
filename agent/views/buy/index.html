@@ -1,0 +1,177 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-4">
+		
+			<form action="" method="post">
+			<table>
+			<tr>
+				<td>Date From:</td>
+				<td>
+					<input type="text" id="dateFrm" />
+				</td>
+			</tr>
+			<tr>
+				<td>Date To:</td>
+				<td>
+					<input type="text" id="dateTo" />
+				</td>
+			</tr>
+			</table>
+			<div>
+		   		<span id="errorMessage" class="error"></span>
+		   	</div>
+			<div style="display: inline;">
+				<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
+			</div>
+			<div style="display: inline;">
+				<input type="button" id="btnBuy" value="Buy" style="width:90px;height:40px; font-size: 20px;"/>
+			</div>
+			</form>
+		</div>
+		
+		<div class="col-lg-8">
+		
+			<form action="" method="post">
+				<table border="1">
+					<thead>
+					  <tr>
+					  	<th>Date</th>
+					  	<th>Agent ID</th>
+					  	<th>Doc No</th>
+					    <th>Quantity</th>
+					    <th>Unit Price (RM)</th>
+					    <th>Sub Total</th>
+					    <th>Commission</th>
+					    <th>Amount</th>
+					    <th>Payment Date</th>
+					    <th>Ref. No</th>
+					    <th>Payment Type</th>
+					  </tr>
+					 </thead>
+					 <tbody data-bind="template: { name: 'agentTemplate', foreach: lineItems }"></tbody>
+				</table>	
+			</form>
+
+			<script type="text/html" id="agentTemplate">
+				<tr>
+				<td><span data-bind="text: code"></span></td>
+    			<td><span data-bind="text: date"></span></td>
+    			<td><span data-bind="text: qty"></span></td>
+				<td><span data-bind="text: unitPrice"></span></td>
+				<td><span data-bind="text: subTotal"></span></td>
+				<td><span data-bind="text: commision"></span></td>
+				<td><span data-bind="text: amount"></span></td>
+				<td><span data-bind="text: paymentDate"></span></td>
+				<td><span data-bind="text: refNo"></span></td>
+				<td><span data-bind="text: paymentType"></span></td>
+  				</tr>
+			</script>
+			
+			<script type="text/javascript">
+			$("#btnBuy").click(function(){
+				window.location = "/agent/buy/create/";
+			});
+			
+			// search
+			function viewModel() {
+				var self = this;
+				
+				self.lineItems = ko.observableArray();
+				
+				self.addLineItem = function(dataRow) {
+					var lineItemDisplay = new LineItemDisplay();
+					lineItemDisplay.code = ko.observable(dataRow.code);
+					lineItemDisplay.date = ko.observable(dataRow.date);
+					lineItemDisplay.qty = ko.observable(dataRow.qty);
+					lineItemDisplay.unitPrice = ko.observable(dataRow.unitPrice);
+					lineItemDisplay.subTotal = ko.observable(dataRow.subTotal);
+					lineItemDisplay.commision = ko.observable(dataRow.commision);
+					lineItemDisplay.amount = ko.observable(dataRow.amount);
+					lineItemDisplay.paymentDate = ko.observable(dataRow.paymentDate);
+					lineItemDisplay.refNo = ko.observable(dataRow.refNo);
+					lineItemDisplay.paymentType = ko.observable(dataRow.paymentType);
+					
+					self.lineItems.push(lineItemDisplay)
+					}
+			}
+			var vm = new viewModel();
+			
+			ko.applyBindings(vm);
+			
+			var LineItemDisplay = function() {
+				var self = this;
+				
+				self.code;
+				self.date;
+				self.qty;
+				self.unitPrice;
+				self.subTotal;
+				self.commision;
+				self.amount;
+				self.paymentDate;
+				self.refNo;
+				self.paymentType;
+			};
+			
+			$("#btnSearch").click(function() {
+				search();
+			});
+			
+			function search() {
+				var postData = {
+						dateFrm: $("#dateFrm").val(),
+						dateTo: $("#dateTo").val()
+				};
+				
+				$.post("/agent/buy/search/", postData, function(data, textResult){
+						jsonData = JSON.parse(data);
+						
+						if(jsonData.returnResult){
+							$("#errorMessage"),text(jsonData.errorMsg)
+						}
+						else{
+							// jason data
+							vm.lineItems.removeAll();
+							
+							for (var i = 0; i < jsonData.data.length; i++) {
+								var dataRow = jsonData.data[i];
+								vm.addLineItem(dataRow);
+							}
+						}
+				});
+			}
+			</script>
+			
+			
+		</div>
+	</div> <!-- /row -->
+
+	<hr>
+
+      <footer>
+        <p>&copy; Borneo Ixora 2013</p>
+      </footer>
+</div> <!-- /container -->
+	
+<script>
+  	$(function() {
+    	$( "#dateFrm" ).datepicker({
+    	    dateFormat: 'dd/mm/yy',
+    	    altField: '#thealtdate',
+    	    altFormat: 'yy-mm-dd'
+    	});
+  	});
+  	$(function() {
+    	$( "#dateTo" ).datepicker({
+    	    dateFormat: 'dd/mm/yy',
+    	    altField: '#thealtdate',
+    	    altFormat: 'yy-mm-dd'
+    	});
+  	});
+</script>
+{% endblock %}

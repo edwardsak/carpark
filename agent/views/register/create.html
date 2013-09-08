@@ -1,0 +1,103 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<br>
+	<div class="col-lg-4" align="left"  >
+	
+	<table>
+		<tr>
+			<td>Date:</td>
+			<td>
+				<span id="date" />{{ today }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Car Plate:</td>
+			<td>
+				<input type="text" id="carPlate" />
+			</td>
+		</tr>
+		<tr>
+			<td>Car Owner:</td>
+			<td>
+				<input type="text" id="name" />
+			</td>
+		</tr>
+		<tr>
+			<td>Owner Ic:</td>
+			<td>
+				<input type="text" id="ic" />
+			</td>
+		</tr>
+		<tr>
+			<td>Owner Address:</td>
+			<td>
+				<input type="text" id="address" />
+			</td>
+		</tr>
+		<tr>
+			<td>Owner Tel:</td>
+			<td>
+				<input type="text" id="tel" />
+			</td>
+		</tr>
+		<tr>
+			<td>Owner Hp:</td>
+			<td>
+				<input type="text" id="hp" />
+			</td>
+		</tr>
+		<tr>
+			<td>Owner Email:</td>
+			<td>
+				<input type="text" id="email" />
+			</td>
+		</tr>
+		<tr>
+			<td>Tag No:</td>
+			<td>
+				<input type="text" id="tagNo" />
+			</td>
+		</tr>	
+	</table>
+	<div>
+		<input type="button" id="btnSave" value="Save" />
+	</div>
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+	<br>	
+	
+	</div> <!-- /classrow -->
+		
+
+<script type="text/javascript">	
+$("#btnSave").click(function(){
+	var postData = {
+			date: $("#date").text(),
+			carPlate: $("#carPlate").val(),
+			name: $("#name").val(),
+			ic: $("#ic").val(),
+			address: $("#address").val(),
+			tel: $("#tel").val(),
+			hp: $("#hp").val(),
+			email: $("#email").val(),
+			tagNo: $("#tagNo").val(),
+	};
+	
+	$.post("/agent/register/create/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/agent/register/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
+});
+</script>
+{% endblock %}

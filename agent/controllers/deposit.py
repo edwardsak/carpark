@@ -1,8 +1,10 @@
-from admin.controllers.base import BaseHandler
+from agent.controllers.base import BaseHandler
 from sharelib.utils import DateTime
 from datalayer.models.models import Agent
-from datalayer.viewmodels.viewmodels import AgentViewModel
-from datalayer.appservice.admin.agent import AgentAppService
+from datalayer.models.models import Deposit
+from datalayer.viewmodels.viewmodels import DepositViewModel
+from datalayer.appservice.agent.deposit import DepositAppService
+
 
 import os
 import jinja2
@@ -15,49 +17,44 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class Create(BaseHandler):
     def get(self):
-        # validate admin is logined or not
+        # validate agent is logined or not
         # if not redirect to login page
         if self.authenticate() == False:
             return
         
-        current_user = self.current_user()
+        current_agent = self.current_agent()
         
         template_values = {
-                           'title': 'Create Agent',
+                           'title': 'Deposit',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_user': current_user
+                           'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('/agent/create.html')
+        template = JINJA_ENVIRONMENT.get_template('deposit/create.html')
         self.response.write(template.render(template_values))
         
     def post(self):
         json_values = {}
         
         try:
+            agent_code = self.session['agent_code']
+            
             # get post data
-            name = self.request.get("name")
-            code = self.request.get("code")
-            pwd = self.request.get("pwd")
-            address = self.request.get("address")
-            tel = self.request.get("tel")
-            hp = self.request.get("hp")
-            email = self.request.get("email")
-            bal_amt = self.request.get("balAmt")
+            date = DateTime.to_date(self.request.get("date"))
+            amt = float(self.request.get("amount"))
+            payment_date = DateTime.to_date(self.request.get("paymentDate"))
+            ref_no = self.request.get("refNo")
     
             #save data to view model class
-            vm = AgentViewModel()
-            vm.code = code
-            vm.name = name
-            vm.pwd = pwd
-            vm.address = address
-            vm.tel = tel
-            vm.hp = hp
-            vm.email = email
-            vm.bal_amt = bal_amt
-            vm.active = True
-                
-            app_service = AgentAppService()
+            vm = DepositViewModel()
+            vm.tran_date = date
+            vm.amt = amt
+            vm.agent_code = agent_code
+            vm.payment_date = payment_date
+            vm.payment_ref_no = ref_no
+            vm.payment_type = 1
+      
+            app_service = DepositAppService()
             app_service.create(vm)
             
             json_values['returnStatus'] = True
@@ -67,28 +64,25 @@ class Create(BaseHandler):
             
         json_str = json.dumps(json_values)
         self.response.out.write(json_str)
-
+        
 class Index(BaseHandler):
     def get(self):
-        # validate admin is logined or not
+        # validate agent is logined or not
         # if not redirect to login page
         if self.authenticate() == False:
             return
         
-        current_user = self.current_user()
-        
-        agents = Agent.query().fetch()
+        current_agent = self.current_agent()
         
         template_values = {
-                           'title': 'Agent List',
+                           'title': 'Deposit List',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_user': current_user,
-                           'agents': agents
+                           'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('agent/index.html')
+        template = JINJA_ENVIRONMENT.get_template('deposit/index.html')
         self.response.write(template.render(template_values))
-        
+
 class Update(BaseHandler):
     def get(self, code):
         # validate admin is logined or not
@@ -96,18 +90,17 @@ class Update(BaseHandler):
         if self.authenticate() == False:
             return
         
-        current_user = self.current_user()
+        current_agent = self.current_agent()
         
         agent = Agent.query(Agent.code==code).get()
         
         template_values = {
-                           'title': 'Update Agent',
-                           'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_user': current_user,
+                           'title': 'Update Profile',
+                           'current_agent': current_agent,
                            'agent': agent
-                           }
+                           } 
         
-        template = JINJA_ENVIRONMENT.get_template('agent/update.html')
+        template = JINJA_ENVIRONMENT.get_template('account/update.html')
         self.response.write(template.render(template_values))
         
     def post(self, code):
@@ -115,26 +108,26 @@ class Update(BaseHandler):
         
         try:
             name = self.request.get('name')
-            address = self.request.get("address")
-            tel = self.request.get("tel")
-            hp = self.request.get("hp")
-            email = self.request.get("email")
+            address = self.request.get('address')
+            tel = self.request.get('tel')
+            hp = self.request.get('hp')
+            email = self.request.get('email')
             last_modified = self.request.get('lastModified')
             
-            current_user = self.current_user()
+            agent = Agent.query(Agent.code==code).get()
             
-            vm = AgentViewModel()
+            vm = DepositViewModel()
             vm.code = code
             vm.name = name
             vm.address = address
             vm.tel = tel
             vm.hp = hp
             vm.email = email
+            vm.account_type = agent.account_type
             vm.active = True
             vm.last_modified = last_modified
-            vm.user_code = current_user.code
             
-            app_service = AgentAppService()
+            app_service = DepositAppService()
             app_service.update(vm)
         
             json_values['returnStatus'] = True
@@ -144,32 +137,33 @@ class Update(BaseHandler):
         
         json_str = json.dumps(json_values)
         self.response.out.write(json_str);
-
+        
 class Search(BaseHandler):
     def post(self):
-        name = self.request.get('name')
-        code = self.request.get("code")
+        #dateFrm = DateTime.to_date(self.request.get('dateFrm'))
+        #dateTo = DateTime.to_date(self.request.get("dateTo"))
+        current_agent = self.current_agent()
+        code = current_agent.code
         
-        q = Agent.query()
+        q = Deposit.query()
         
-        if name:
-            q = q.filter(Agent.name==name)
+        #if dateFrm:
+            #q = q.filter(Buy.payment_date==dateFrm)
+            
+        #if dateTo:
+            #q = q.filter(Buy.payment_date==dateTo)
             
         if code:
-            q = q.filter(Agent.code==code)
+            q = q.filter(Deposit.agent_code==code)
             
-        agents = q.fetch()
+        deposits = q.fetch()
         
         # create json
         data = []
-        for agent in agents:
+        for deposit in deposits:
             data.append({
-                         'code':agent.code,
-                         'name': agent.name,
-                         'address': agent.address,
-                         'tel': agent.tel,
-                         'hp': agent.hp,
-                         'email': agent.email,
+                         'code': deposit.agent_code,
+                         'amt': deposit.amt
                          })
             
         json_values = {

@@ -47,6 +47,7 @@ class Create(BaseHandler):
             vm.name = name
             vm.pwd = pwd
             vm.level = level
+            vm.active = True
                 
             app_service = UserAppService()
             app_service.create(vm)
@@ -106,14 +107,19 @@ class Update(BaseHandler):
         
         try:
             name = self.request.get('name')
-            pwd = self.request.get("pwd")
-            level = self.request.get("level")
+            level = int(self.request.get("level"))
+            active = bool(self.request.get("active"))
+            last_modified = self.request.get('lastModified')
+            
+            current_user = self.current_user()
             
             vm = UserViewModel()
-            vm.code = User.query(User.code==code).get()
+            vm.code = code
             vm.name = name
-            vm.pwd = pwd
             vm.level = level
+            vm.active = active
+            vm.last_modified = last_modified
+            vm.user_code = current_user.code
             
             app_service = UserAppService()
             app_service.update(vm)
@@ -123,8 +129,8 @@ class Update(BaseHandler):
             json_values['returnStatus'] = False
             json_values['returnMessage'] = str(ex)
         
-        jsonStr = json.dumps(json_values)
-        self.response.out.write(jsonStr);
+        json_str = json.dumps(json_values)
+        self.response.out.write(json_str);
 
 class Search(BaseHandler):
     def post(self):
@@ -147,6 +153,8 @@ class Search(BaseHandler):
             data.append({
                          'code':user.code,
                          'name': user.name,
+                         'level': user.level,
+                         'Active': user.active,
                          })
             
         json_values = {

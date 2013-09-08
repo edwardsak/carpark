@@ -4,77 +4,90 @@
 <h2>{{ title }}</h2>
 
 <br>
-	<div class="col-lg-4">
-	
+<div class="col-lg-4, "align="left">	
 	<table>
 		<tr>
-			<td>Date Time:</td>
+			<td>Date:</td>
 			<td>
 				<span id="date">{{ today }}</span>
 			</td>
 		</tr>
-		<tr>
-			<td>Car Reg. No:</td>
+	  	<tr>
+			<td>Quantity:</td>
 			<td>
-				<input type="text" id="carRegno" />
+				<input type="text" id="quantity" />
 			</td>
 		</tr>
 		<tr>
-			<td>Name:</td>
+			<td>Unit Price (RM):</td>
 			<td>
-				<input type="text" id="name" />
-			</td>
-		</tr>
-		<tr>
-			<td>Ic No:</td>
-			<td>
-				<input type="text" id="icNo" />
-			</td>
-		</tr>
-		<tr>
-			<td>Hp:</td>
-			<td>
-				<input type="text" id="hp" />
-			</td>
-		</tr>
-		<tr>
-			<td>Email:</td>
-			<td>
-				<input type="text" id="email" />
-			</td>
-		</tr>
-		<tr>
-			<td>Address:</td>
-			<td>
-				<textarea id="address" rows="4" cols="30" placeholder="Enter your mailling address"></textarea>
-			</td>
-		</tr>
-		<tr>
-			<td>Tag No:</td>
-			<td>
-				<input type="text" id="tagNo" />
+				<span type="text" id="unitPrice" value="10" readonly="readonly"/></span>
 			</td>
 		</tr>
 		<tr>
 			<td>Amount (RM):</td>
 			<td>
-				<span input type="text" id="amount"></span>
+				<span type="text" id="amount" value="0" readonly="readonly" /></span>
+			</td>
+		</tr>
+		<tr>
+			<td>Payment Date:</td>
+			<td>
+				<input type="text" id="paymentDate" />
+			</td>
+		</tr>
+		<tr>
+			<td>Ref. No:</td>
+			<td>
+				<input type="text" id="refNo" />
+			</td>
+		</tr>
+		<tr>
+			<td>Attachment:</td>
+			<td>
+				<INPUT TYPE="file" NAME="attachedfile" MAXLENGTH=50 ALLOW="text/*" > 
 			</td>
 		</tr>
 	</table>
-	
 	<div>
-   		<span id="errorMessage" class="error"></span>
-   	</div>
-	<br>	
-	<div>
-		<input type="button" id="btnCreate" value="Register" />
+		<span id="errorMessage" class="error"></span>
 	</div>
-	</div> <!-- /class -->
+	<div>
+		<input type="button" id="btnSave" value="Save" />
+	</div>
+</div> <!-- /class -->
 
 <script type="text/javascript">
-$("#btnCreate").click(function(){
+$(function() {
+	$( "#paymentDate" ).datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    altField: '#thealtdate',
+	    altFormat: 'yy-mm-dd'
+	});
+	});
 	
+$("#btnSave").click(function(){
+	var postData = {
+			date: $("#date").text(),
+			quantity: $("#quantity").val(),
+			unitPrice: $("#unitPrice").val(),
+			amount: $("#amount").val(),
+			refNo: $("#refNo").val(),
+			paymentDate: $("#paymentDate").val(),
+			
+	};
+	
+	$.post("/agent/buy/create/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/agent/buy/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
 });
 </script>
 {% endblock %}

@@ -10,7 +10,7 @@
 			<form action="" method="post">
 			<table>
 			<tr>
-				<td>Code:</td>
+				<td>User ID:</td>
 				<td>
 					<input type="text" id="code" />
 				</td>
@@ -37,9 +37,10 @@
 				<table border="1">
 					<thead>
 					  <tr>
-					  	<th>User Id</th>
+					  	<th>User ID</th>
 					  	<th>Name</th>
 					    <th>Level</th>
+					    <th>Active</th>
 					  </tr>
 					 </thead>
 					 <tbody data-bind="template: { name: 'adminTemplate', foreach: lineItems }"></tbody>
@@ -53,6 +54,7 @@
     			<td><a data-bind="text: code, attr: { href: urlUpdate, title: code }"></a></td>
     			<td><span data-bind="text: name"></span></td>
     			<td><span data-bind="text: level"></span></td>
+				<td><span data-bind="text: active"></span></td>
   				</tr>
 			</script>
 			
@@ -72,7 +74,8 @@
 					lineItemDisplay.code = ko.observable(dataRow.code);
 					lineItemDisplay.name = ko.observable(dataRow.name);
 					lineItemDisplay.level = ko.observable(dataRow.level);
-					lineItemDisplay.urlUpdate = ko.observable("/admin/user/update/" + dataRow.code);
+					lineItemDisplay.active = ko.observable(dataRow.active);
+					lineItemDisplay.urlUpdate = ko.observable("/admin/user/update/" + dataRow.code + "/");
 					
 					self.lineItems.push(lineItemDisplay)
 					}
@@ -93,6 +96,7 @@
 				self.code;
 				self.name;
 				self.level;
+				self.active;
 				self.urlUpdate;
 			};
 			

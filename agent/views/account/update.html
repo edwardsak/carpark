@@ -67,15 +67,14 @@ $("#btnSave").click(function(){
 			tel: $("#tel").val(),
 			hp: $("#hp").val(),
 			email: $("#email").val(),
-			account_type: $("#accout_type").val(),
 			lastModified: $("#lastModified").val()
 	};
 	
-	$.post("/admin/agent/update/{{ agent.code }}/", postData, function(data, textResult) {
+	$.post("/agent/account/update/{{ agent.code }}/", postData, function(data, textResult) {
 		jsonData = JSON.parse(data);
 		
 		if (jsonData.returnStatus) {
-			window.location = "/admin/agent/";
+			window.location = "/agent/";
 		}
 		else {
 			$("#errorMessage").text(jsonData.returnMessage);
