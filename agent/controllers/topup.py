@@ -25,12 +25,12 @@ class Create(BaseHandler):
         current_agent = self.current_agent()
         
         template_values = {
-                           'title': 'Register',
+                           'title': 'Top Up',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('register/create.html')
+        template = JINJA_ENVIRONMENT.get_template('topup/create.html')
         self.response.write(template.render(template_values))
         
     def post(self):
