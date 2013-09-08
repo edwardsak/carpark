@@ -84,12 +84,12 @@ class Index(BaseHandler):
         current_agent = self.current_agent()
         
         template_values = {
-                           'title': 'Register List',
+                           'title': 'Top Up List',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_agent': current_agent
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('register/index.html')
+        template = JINJA_ENVIRONMENT.get_template('topup/index.html')
         self.response.write(template.render(template_values))
 
 class Update(BaseHandler):

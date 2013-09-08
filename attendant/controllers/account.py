@@ -1,7 +1,7 @@
 from base import BaseHandler
 from datalayer.models.models import Attendant
 from datalayer.viewmodels.viewmodels import AttendantViewModel
-from datalayer.appservice.attendant.account import AttendantAppService
+from datalayer.appservice.attendant.account import AccountAppService
 
 import json
 import os
