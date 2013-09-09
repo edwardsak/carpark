@@ -42,26 +42,16 @@ class Create(BaseHandler):
             # get post data
             date = DateTime.to_date(self.request.get("date"))
             carPlate = self.request.get("carPlate")
-            name = self.request.get("name")
-            ic = self.request.get("ic")
-            address = self.request.get("address")
-            tel = self.request.get("tel")
-            hp = self.request.get("hp")
-            email = self.request.get("email")
-            tagNo = self.request.get("tagNo")
+            amount = float(self.request.get("amount"))
+
     
             #save data to view model class
             vm = TopUpViewModel()
             vm.tran_date = date
             vm.agent_code = agent_code
             vm.car_reg_no = carPlate
-            vm.car_name = name
-            vm.car_ic = ic
-            vm.car_address = address
-            vm.car_tel = tel
-            vm.car_hp = hp
-            vm.car_email = email
-            vm.tag_code = tagNo
+            vm.sub_total = amount
+
       
             app_service = TopUpAppService()
             app_service.create(vm)
@@ -149,48 +139,50 @@ class Update(BaseHandler):
         
 class Search(BaseHandler):
     def post(self):
-        carPlate = self.request.get('carPlate')
-        name = self.request.get("name")
-        ic = self.request.get("ic")
-        current_agent = self.current_agent()
-        code = current_agent.code
+        json_values = {}
         
-        q = TopUp.query()
-        
-        if carPlate:
-            q = q.filter(TopUp.car_reg_no==carPlate)
+        try:
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get("dateTo"))
+            current_agent = self.current_agent()
+            agent_code = current_agent.code
+            carPlate = self.request.get('carPlate')
             
-        #if name:
-           # q = q.filter(TopUp.car_name==name)
+            q = TopUp.query()
             
-        #if ic:
-            #q = q.filter(TopUp.car_ic==ic)
+            if date_from:
+                q = q.filter(TopUp.tran_date>=date_from)
+                
+            if date_to:
+                q = q.filter(TopUp.tran_date<=date_to)
+                
+            if agent_code:
+                q = q.filter(TopUp.agent_code==agent_code)
+               
+            if carPlate:
+                q = q.filter(TopUp.car_reg_no==carPlate)
+                
+            topUps = q.fetch()
             
-        #if code:
-            #q = q.filter(TopUp.agent_code==code)
-            
-        registers = q.fetch()
-        
-        # create json
-        data = []
-        for register in registers:
-            data.append({
-                         #'date': register.tran_date,
-                         'code': register.agent_code,
-                         'carPlate': register.car_reg_no,
-                         'name': register.car_name,
-                         'ic': register.car_ic,
-                         'address': register.car_address,
-                         'tel': register.car_tel,
-                         'hp': register.car_hp,
-                         'email': register.car_email,
-                         'tagNo': register.tag_code
-                         })
-            
-        json_values = {
-                       'returnStatus': True,
-                       'data': data
-                       }
+            # create json
+            data = []
+            for topUp in topUps:
+                data.append({
+                             #'date': register.tran_date,
+                             'agentCode': topUp.agent_code,
+                             'carPlate': topUp.car_reg_no,
+                             'date': DateTime.to_date_string(topUp.tran_date),
+                             'amount': topUp.amt,
+                             'paymentDate': DateTime.to_date_string(topUp.payment_date),
+                             'refNo': topUp.payment_ref_no,
+                             'paymentType': topUp.payment_type
+                             })
+                
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
         
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);

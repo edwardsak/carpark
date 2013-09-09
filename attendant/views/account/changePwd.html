@@ -11,7 +11,7 @@
 			<tr>
 				<td>Old Password:</td>
 				<td>
-					<input type="text" id="code" />
+					<input type="text" id="oldPwd" />
 				</td>
 			</tr>
 			<tr>
@@ -42,8 +42,30 @@
 
 	
 <script type="text/javascript">
-$("#btnCreate").click(function(){
-	//window.location = "/agent/buy/create/";
+$("#btnChange").click(function(){
+	// new password must same with confirm password
+	if ($("#newPwd").val() != $("#confirmPwd").val()) {
+		$("#errorMessage").text("Password not same.");
+		return;
+	};
+	
+	// save
+	var postData = {
+			newPwd: $("#newPwd").val(),
+			oldPwd: $("#oldPwd").val(),
+	};
+	
+	$.post("/attendant/account/changepwd/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+		
+		if (jsonData.returnStatus) {
+			window.location = "/attendant/";
+		}
+		else {
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
 });
 </script>
 {% endblock %}

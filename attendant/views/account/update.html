@@ -42,11 +42,11 @@ $("#btnSave").click(function(){
 			lastModified: $("#lastModified").val()
 	};
 	
-	$.post("/admin/attendant/update/{{ attendant.code }}/", postData, function(data, textResult) {
+	$.post("/attendant/account/update/{{ attendant.code }}/", postData, function(data, textResult) {
 		jsonData = JSON.parse(data);
 		
 		if (jsonData.returnStatus) {
-			window.location = "/admin/attendant/";
+			window.location = "/attendant/";
 		}
 		else {
 			$("#errorMessage").text(jsonData.returnMessage);

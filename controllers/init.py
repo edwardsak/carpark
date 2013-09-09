@@ -27,6 +27,7 @@ class Init(webapp2.RequestHandler):
     def __create_system_setting(self):
         vm = Object()
         vm.tag_sell_price = 10
+        vm.reset_duration = 2
         
         app = SystemSettingAppService()
         app.create(vm)

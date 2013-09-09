@@ -1,0 +1,134 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-4">
+		
+			<form action="" method="post">
+			<table>
+			<tr>
+				<td>Attendant ID:</td>
+				<td>
+					<input type="text" id="attendantCode" />
+				</td>
+			</tr>
+			<tr>
+				<td>Name:</td>
+				<td>
+					<input type="text" id="name" />
+				</td>
+			</tr>
+			</table>
+			<div>
+		   		<span id="errorMessage" class="error"></span>
+		   	</div>
+			<div>
+				<input type="button" id="btnSearch" value="Search" />
+			</div>
+			</form>
+		</div>
+		
+		<div class="col-lg-8">
+		
+			<form action="" method="post">
+				<table border="1">
+					<thead>
+					  <tr>
+					  	<th>Attendant ID</th>
+					  	<th>Name</th>
+					  </tr>
+					 </thead>
+					 <tbody data-bind="template: { name: 'adminTemplate', foreach: lineItems }"></tbody>
+				</table>	
+			</form>
+			
+			<input type="button" id="btnCreate" value="Create" />
+
+			<script type="text/html" id="adminTemplate">
+				<tr>
+    			<td><a data-bind="text: attendantCode, attr: { href: urlUpdate, title: attendantCode }"></a></td>
+    			<td><span data-bind="text: name"></span></td>
+  				</tr>
+			</script>
+			
+			<script type="text/javascript">
+			$("#btnCreate").click(function(){
+				window.location = "/admin/attendant/create/";
+			});
+			
+			// search
+			function viewModel() {
+				var self = this;
+				
+				self.lineItems = ko.observableArray();
+				
+				self.addLineItem = function(dataRow) {
+					var lineItemDisplay = new LineItemDisplay();
+					lineItemDisplay.attendantCode = ko.observable(dataRow.attendantCode);
+					lineItemDisplay.name = ko.observable(dataRow.name);
+					lineItemDisplay.urlUpdate = ko.observable("/admin/attendant/update/" + dataRow.attendantCode + "/");
+					
+					self.lineItems.push(lineItemDisplay)
+					}
+				self.deleteLineItem = function(currentLineItem) {
+					var postData = {
+						code: currentLineItem.code()
+					};
+				};
+			}
+			var vm = new viewModel();
+			
+			ko.applyBindings(vm);
+			
+			var LineItemDisplay = function() {
+				var self = this;
+				
+				self.attendantCode;
+				self.name;
+				self.urlUpdate;
+			};
+			
+			$("#btnSearch").click(function() {
+				search();
+			});
+			
+			function search() {
+				var postData = {
+						attendantCode: $("#attendantCode").val(),
+						name: $("#name").val()
+				};
+				
+				$.post("/admin/attendant/search/", postData, function(data, textResult){
+						jsonData = JSON.parse(data);
+						
+						if(jsonData.returnStatus){
+							// jason data
+							vm.lineItems.removeAll();
+							
+							for (var i = 0; i < jsonData.data.length; i++) {
+								var dataRow = jsonData.data[i];
+								vm.addLineItem(dataRow);
+							}
+						}
+						else{
+							$("#errorMessage").text(jsonData.errorMsg);
+							
+						}
+				});
+			}
+			</script>
+			
+		</div>
+	</div> <!-- /row -->
+
+	<hr>
+
+      <footer>
+        <p>&copy; Borneo Ixora 2013</p>
+      </footer>
+</div> <!-- /container -->
+
+{% endblock %}

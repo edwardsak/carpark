@@ -12,14 +12,14 @@ class Index(BaseHandler):
     def get(self):
         # validate agent is logined or not
         # if not redirect to login page
-        #if self.authenticate() == False:
-        #    return
+        if self.authenticate() == False:
+            return
         
-        #current_agent = self.current_agent()
+        current_agent = self.current_agent()
         
         template_values = {
                            'title': 'Agent Home',
-                           #'current_agent': current_agent
+                           'current_agent': current_agent
                            }
         
         template = JINJA_ENVIRONMENT.get_template('home/index.html')
@@ -29,14 +29,14 @@ class About(BaseHandler):
     def get(self):
         # validate agent is logined or not
         # if not redirect to login page
-        #if self.authenticate() == False:
-        #    return
+        if self.authenticate() == False:
+            return
         
-        #current_agent = self.current_agent()
+        current_agent = self.current_agent()
         
         template_values = {
                            'title': 'Agent Home About',
-                           #'current_agent': current_agent
+                           'current_agent': current_agent
                            }
         
         template = JINJA_ENVIRONMENT.get_template('home/about.html')

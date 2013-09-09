@@ -7,18 +7,18 @@
 	<div class="col-lg-4">
 	
 <form action="" method="post">
-	<input type="hidden" id="lastModified" value="{{ attendant.last_modified }}"/>
+	<input type="hidden" id="lastModified" value="{{ user.last_modified }}"/>
 	<table>
 		<tr>
-			<td>Attendant ID:</td>
+			<td>User ID:</td>
 			<td>
-				<span>{{ attendant.code }}</span>
+				<span>{{ user.code }}</span>
 			</td>
 		</tr>
 		<tr>
 			<td>Name:</td>
 			<td>
-				<input type="text" id="name" value="{{ attendant.name }}" />
+				<input type="text" id="name" value="{{ user.name }}" />
 			</td>
 		</tr>
 	</table>
@@ -41,12 +41,12 @@ $("#btnSave").click(function(){
 			name: $("#name").val(),
 			lastModified: $("#lastModified").val()
 	};
-	
-	$.post("/admin/attendant/update/{{ attendant.code }}/", postData, function(data, textResult) {
+
+	$.post("/admin/account/update/{{ user.code }}/", postData, function(data, textResult) {
 		jsonData = JSON.parse(data);
 		
 		if (jsonData.returnStatus) {
-			window.location = "/admin/attendant/";
+			window.location = "/admin/";
 		}
 		else {
 			$("#errorMessage").text(jsonData.returnMessage);

@@ -1,7 +1,7 @@
 from controllers import home, init
 from admin.controllers import home as admin_home, account as admin_account, user as admin_user, agent as admin_agent, attendant as admin_attendant, customer as admin_customer
 from agent.controllers import home as agent_home, account as agent_account, buy as agent_buy, deposit as agent_deposit, register as agent_register, topup as agent_topup, statement as agent_statement
-from attendant.controllers import home as attendant_home, account as attendant_account, parking as attendant_parking
+from attendant.controllers import home as attendant_home, account as attendant_account, charge as attendant_charge
 from customer.controllers import home as customer_home, account as customer_account
 from datalayer import test as datalayer_test
 
@@ -19,6 +19,7 @@ app = webapp2.WSGIApplication([
                             ('/admin/', admin_home.Index),
                             ('/admin/about/', admin_home.About),
                             ('/admin/account/', admin_account.Index),
+                            ('/admin/account/update/([^/]+)/', admin_account.Update),
                             ('/admin/account/login/', admin_account.Login),
                             ('/admin/account/logout/', admin_account.Logout),
                             ('/admin/account/changepwd/', admin_account.ChangePwd),
@@ -47,6 +48,7 @@ app = webapp2.WSGIApplication([
                             ('/agent/about/', agent_home.About),
                             ('/agent/account/update/([^/]+)/', agent_account.Update),
                             ('/agent/account/login/', agent_account.Login),
+                            ('/agent/account/logout/', agent_account.Logout),
                             ('/agent/account/changepwd/', agent_account.ChangePwd),
                             
                             ('/agent/buy/', agent_buy.Index),
@@ -64,11 +66,13 @@ app = webapp2.WSGIApplication([
                             
                             ('/attendant/', attendant_home.Index),
                             ('/attendant/about/', attendant_home.About),
-                            ('/attendant/account/', attendant_account.Index),
+                            ('/attendant/account/update/([^/]+)/', attendant_account.Update),
                             ('/attendant/account/login/', attendant_account.Login),
+                            ('/attendant/account/logout/', attendant_account.Logout),
                             ('/attendant/account/changepwd/', attendant_account.ChangePwd),
-                            ('/attendant/parking/charge/', attendant_parking.Charge),
-                            ('/attendant/parking/charge/list/', attendant_parking.ChargeList),
+                            ('/attendant/charge/', attendant_charge.Index),
+                            ('/attendant/charge/create/', attendant_charge.Create),
+                            ('/attendant/charge/search/', attendant_charge.Search),
                             
                             ('/customer/', customer_home.Index),
                             ('/customer/about/', customer_home.About),

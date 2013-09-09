@@ -140,36 +140,44 @@ class Update(BaseHandler):
         
 class Search(BaseHandler):
     def post(self):
-        #dateFrm = DateTime.to_date(self.request.get('dateFrm'))
-        #dateTo = DateTime.to_date(self.request.get("dateTo"))
-        current_agent = self.current_agent()
-        code = current_agent.code
+        json_values = {}
         
-        q = Deposit.query()
-        
-        #if dateFrm:
-            #q = q.filter(Buy.payment_date==dateFrm)
+        try:
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get("dateTo"))
+            current_agent = self.current_agent()
+            agent_code = current_agent.code
             
-        #if dateTo:
-            #q = q.filter(Buy.payment_date==dateTo)
+            q = Deposit.query()
             
-        if code:
-            q = q.filter(Deposit.agent_code==code)
+            if date_from:
+                q = q.filter(Deposit.tran_date>=date_from)
+                
+            if date_to:
+                q = q.filter(Deposit.tran_date<=date_to)
+                
+            if agent_code:
+                q = q.filter(Deposit.agent_code==agent_code)
+                
+            deposits = q.fetch()
             
-        deposits = q.fetch()
-        
-        # create json
-        data = []
-        for deposit in deposits:
-            data.append({
-                         'code': deposit.agent_code,
-                         'amt': deposit.amt
-                         })
-            
-        json_values = {
-                       'returnStatus': True,
-                       'data': data
-                       }
+            # create json
+            data = []
+            for deposit in deposits:
+                data.append({
+                             'agentCode': deposit.agent_code,
+                             'date': DateTime.to_date_string(deposit.tran_date),
+                             'amount': deposit.amt,
+                             'paymentDate': DateTime.to_date_string(deposit.payment_date),
+                             'refNo': deposit.payment_ref_no,
+                             'paymentType': deposit.payment_type
+                             })
+                
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex) 
         
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);

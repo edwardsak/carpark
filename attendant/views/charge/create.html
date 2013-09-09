@@ -4,13 +4,18 @@
 <h2>{{ title }}</h2>
 
 <br>
-	<div class="col-lg-4" align="left"  >
-	
+<div class="col-lg-4, "align="left">	
 	<table>
 		<tr>
 			<td>Date:</td>
 			<td>
-				<span id="date" />{{ today }}</span>
+				<span id="date">{{ today }}</span>
+			</td>
+		</tr>
+	  	<tr>
+			<td>Lot No:</td>
+			<td>
+				<input type="text" id="lotNo" />
 			</td>
 		</tr>
 		<tr>
@@ -20,36 +25,34 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Amount:</td>
+			<td>Remark:</td>
 			<td>
-				<input type="text" id="amount" />
+				<textarea name="textarea" rows="10" cols="50" id="remark"></textarea>
 			</td>
-		</tr>	
+		</tr>
 	</table>
+	<div>
+		<span id="errorMessage" class="error"></span>
+	</div>
 	<div>
 		<input type="button" id="btnSave" value="Save" />
 	</div>
-	<div>
-   		<span id="errorMessage" class="error"></span>
-   	</div>
-	<br>	
-	
-	</div> <!-- /classrow -->
-		
+</div> <!-- /class -->
 
 <script type="text/javascript">	
 $("#btnSave").click(function(){
 	var postData = {
 			date: $("#date").text(),
+			lotNo: $("#lotNo").val(),
 			carPlate: $("#carPlate").val(),
-			amount: $("#amount").val(),
+			remark: $("#remark").val(),
 	};
 	
-	$.post("/agent/topup/create/", postData, function(data, textResult){
+	$.post("/attendant/charge/create/", postData, function(data, textResult){
 		jsonData = JSON.parse(data);
 			
 		if(jsonData.returnStatus){
-			window.location = "/agent/topup/";
+			window.location = "/attendant/charge/";
 		}
 		else{
 			$("#errorMessage").text(jsonData.returnMessage);

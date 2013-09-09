@@ -1,6 +1,8 @@
 from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
-from datalayer.models.models import User
+from datalayer.models.models import Attendant
+from datalayer.viewmodels.viewmodels import AttendantViewModel
+from datalayer.appservice.admin.attendant import AttendantAppService
 
 import os
 import jinja2
@@ -30,30 +32,36 @@ class Create(BaseHandler):
         self.response.write(template.render(template_values))
         
     def post(self):
-        # get post data
-        name = self.request.get("name")
-        code = self.request.get("code")
-        pwd = self.request.get("pwd")
-        level = self.request.get("level")
-
+        json_values = {}
         
-        # create new car
-        user = User()
-        user.name = name
-        user.code = code
-        user.pwd = pwd
-        user.level = level
-        
-        user.put()
-        
-        # return result
-        json_values = {
-                       'returnStatus': True
-                       }
-        
+        try:
+            # get post data
+            name = self.request.get("name")
+            attendant_code = self.request.get("attendantCode")
+            pwd = self.request.get("pwd")            
+            current_user = self.current_user()
+            user_code = current_user.code
+            
+            #save data to view model class
+            vm = AttendantViewModel()
+            vm.name = name
+            vm.code = attendant_code
+            vm.pwd = pwd
+            vm.active = True
+            vm.user_code = user_code
+            vm.comm_per = 5  
+            
+            app_service = AttendantAppService()
+            app_service.create(vm)
+            
+            # return status
+            json_values['returnStatus'] = True
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
+            
         json_str = json.dumps(json_values)
         self.response.out.write(json_str)
-
 
 class Index(BaseHandler):
     def get(self):
@@ -64,13 +72,13 @@ class Index(BaseHandler):
         
         current_user = self.current_user()
         
-        users = User.query().fetch()
+        attendants = Attendant.query().fetch()
         
         template_values = {
                            'title': 'Attendant List',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_user': current_user,
-                           'users': users
+                           'attendants': attendants
                            }
         
         template = JINJA_ENVIRONMENT.get_template('attendant/index.html')
@@ -85,35 +93,42 @@ class Update(BaseHandler):
         
         current_user = self.current_user()
         
-        user = User.query(User.code==code).get()
+        attendant = Attendant.query(Attendant.code==code).get()
         
         template_values = {
                            'title': 'Update Attendant',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_user': current_user,
-                           'user': user
+                           'attendant': attendant
                            }
         
         template = JINJA_ENVIRONMENT.get_template('attendant/update.html')
         self.response.write(template.render(template_values))
         
     def post(self, code):
-        name = self.request.get('name')
-        code = self.request.get("code")
-        pwd = self.request.get("pwd")
-        level = self.request.get("level")
+        json_values = {}
         
-        user = User.query(User.code==code).get()
-        user.name = name
-        user.code = code
-        user.pwd = pwd
-        user.level = level
+        try:
+            name = self.request.get('name')
+            last_modified = self.request.get('lastModified')
+            
+            current_user = self.current_user()
+            
+            vm = AttendantViewModel()
+            vm.name = name
+            vm.code = code
+            vm.active = True
+            vm.last_modified = last_modified
+            vm.user_code = current_user.code
+            vm.comm_per = 5
+            
+            app_service = AttendantAppService()
+            app_service.update(vm)
         
-        user.put()
-        
-        json_values = {
-                       'returnStatus': True
-                       }
+            json_values['returnStatus'] = True
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
         
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);
@@ -121,24 +136,24 @@ class Update(BaseHandler):
 class Search(BaseHandler):
     def post(self):
         name = self.request.get('name')
-        code = self.request.get("code")
+        attendant_code = self.request.get("attendantCode")
         
-        q = User.query()
+        q = Attendant.query()
         
         if name:
-            q = q.filter(User.name==name)
+            q = q.filter(Attendant.name==name)
             
-        if code:
-            q = q.filter(User.code==code)
+        if attendant_code:
+            q = q.filter(Attendant.code==attendant_code)
             
-        users = q.fetch()
+        attendants = q.fetch()
         
         # create json
         data = []
-        for user in users:
+        for attendant in attendants:
             data.append({
-                         'code':user.code,
-                         'name': user.name,
+                         'attendantCode':attendant.code,
+                         'name': attendant.name,
                          })
             
         json_values = {

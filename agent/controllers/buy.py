@@ -144,36 +144,48 @@ class Update(BaseHandler):
         
 class Search(BaseHandler):
     def post(self):
-        #dateFrm = DateTime.to_date(self.request.get('dateFrm'))
-        #dateTo = DateTime.to_date(self.request.get("dateTo"))
-        current_agent = self.current_agent()
-        code = current_agent.code
+        json_values = {}
         
-        q = Buy.query()
-        
-        #if dateFrm:
-            #q = q.filter(Buy.payment_date==dateFrm)
+        try:
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get("dateTo"))
+            current_agent = self.current_agent()
+            agent_code = current_agent.code
             
-        #if dateTo:
-            #q = q.filter(Buy.payment_date==dateTo)
+            q = Buy.query()
             
-        if code:
-            q = q.filter(Buy.agent_code==code)
+            if date_from:
+                q = q.filter(Buy.tran_date>=date_from)
+                
+            if date_to:
+                q = q.filter(Buy.tran_date<=date_to)
+                
+            if agent_code:
+                q = q.filter(Buy.agent_code==agent_code)
+                
+            buys = q.fetch()
             
-        buys = q.fetch()
-        
-        # create json
-        data = []
-        for buy in buys:
-            data.append({
-                         'code': buy.agent_code,
-                         'qty': buy.qty
-                         })
+            # create json
+            data = []
+            for buy in buys:
+                data.append({
+                             'agentCode': buy.agent_code,
+                             'date': DateTime.to_date_string(buy.tran_date),
+                             'qty': buy.qty,
+                             'unitPrice': buy.unit_price,
+                             'subTotal': buy.sub_total,
+                             'commission': buy.comm_amt,
+                             'amount': buy.amt,
+                             'paymentDate': DateTime.to_date_string(buy.payment_date),
+                             'refNo': buy.payment_ref_no,
+                             'paymentType': buy.payment_type
+                             })
+
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex) 
             
-        json_values = {
-                       'returnStatus': True,
-                       'data': data
-                       }
-        
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);

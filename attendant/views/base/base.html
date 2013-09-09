@@ -51,8 +51,8 @@
             		<li class="dropdown">
                     	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile <b class="caret"></b></a>
                     	<ul class="dropdown-menu">
-                        	<li><a href="/attendant/account/">Update Profile</a></li>
-  							<li><a href="/attendant/account/changePwd/">Change Password</a></li>
+                        	<li><a href="/attendant/account/update/{{ current_attendant.code }}/">Update Profile</a></li>
+  							<li><a href="/attendant/account/changepwd/">Change Password</a></li>
                     	</ul>
                 	</li>
 	                
@@ -61,8 +61,8 @@
 	                    <ul class="dropdown-menu">
 	                    	<li class="divider"></li>
 	                        <li class="nav-header">Charge</li>
-	                        <li><a href="/attendant/parking/charge/">New</a></li>
-	                        <li><a href="/attendant/parking/charge/list/">List</a></li>
+	                        <li><a href="/attendant/charge/create/">New</a></li>
+	                        <li><a href="/attendant/charge/">List</a></li>
 	                    </ul>
 	                </li>
                 	

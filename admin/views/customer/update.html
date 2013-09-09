@@ -1,0 +1,58 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+<form action="" method="post">
+	<input type="hidden" id="lastModified" value="{{ customer.last_modified }}"/>
+	<table>
+		<tr>
+			<td>Customer ID:</td>
+			<td>
+				<span>{{ attendant.code }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>
+				<input type="text" id="name" value="{{ customer.name }}" />
+			</td>
+		</tr>
+	</table>
+	
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+	<br>	
+	<div>
+		<input type="button" id="btnSave" value="Save" />
+	</div>
+</form>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+$("#btnSave").click(function(){
+	var postData = {
+			name: $("#name").val(),
+			lastModified: $("#lastModified").val()
+	};
+	
+	$.post("/admin/customer/update/{{ customer.code }}/", postData, function(data, textResult) {
+		jsonData = JSON.parse(data);
+		
+		if (jsonData.returnStatus) {
+			window.location = "/admin/customer/";
+		}
+		else {
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+});
+</script>
+
+{% endblock %}

@@ -1,9 +1,9 @@
-from agent.controllers.base import BaseHandler
+from attendant.controllers.base import BaseHandler
 from sharelib.utils import DateTime
-from datalayer.models.models import Agent
-from datalayer.models.models import Register
-from datalayer.viewmodels.viewmodels import RegisterViewModel
-from datalayer.appservice.agent.register import RegisterAppService
+from datalayer.models.models import Attendant
+from datalayer.models.models import Charge
+from datalayer.viewmodels.viewmodels import ChargeViewModel
+from datalayer.appservice.attendant.charge import ChargeAppService
 
 
 import os
@@ -22,48 +22,38 @@ class Create(BaseHandler):
         if self.authenticate() == False:
             return
         
-        current_agent = self.current_agent()
+        current_attendant = self.current_attendant()
         
         template_values = {
-                           'title': 'Register',
+                           'title': 'Charge',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_agent': current_agent
+                           'current_attendant': current_attendant
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('register/create.html')
+        template = JINJA_ENVIRONMENT.get_template('charge/create.html')
         self.response.write(template.render(template_values))
         
     def post(self):
         json_values = {}
         
         try:
-            agent_code = self.session['agent_code']
+            attendant_code = self.session['attendant_code']
             
             # get post data
             date = DateTime.to_date(self.request.get("date"))
-            carPlate = self.request.get("carPlate")
-            name = self.request.get("name")
-            ic = self.request.get("ic")
-            address = self.request.get("address")
-            tel = self.request.get("tel")
-            hp = self.request.get("hp")
-            email = self.request.get("email")
-            tagNo = self.request.get("tagNo")
+            lot_no = self.request.get("lotNo")
+            car_reg_no = self.request.get("carPlate")
+            remark = self.request.get("remark")
     
             #save data to view model class
-            vm = RegisterViewModel()
+            vm = ChargeViewModel()
             vm.tran_date = date
-            vm.agent_code = agent_code
-            vm.car_reg_no = carPlate
-            vm.car_name = name
-            vm.car_ic = ic
-            vm.car_address = address
-            vm.car_tel = tel
-            vm.car_hp = hp
-            vm.car_email = email
-            vm.tag_code = tagNo
+            vm.attendant_code = attendant_code
+            vm.lot_no = lot_no
+            vm.car_reg_no = car_reg_no
+            vm.remark = remark
       
-            app_service = RegisterAppService()
+            app_service = ChargeAppService()
             app_service.create(vm)
             
             json_values['returnStatus'] = True
@@ -81,15 +71,15 @@ class Index(BaseHandler):
         if self.authenticate() == False:
             return
         
-        current_agent = self.current_agent()
+        current_attendant = self.current_attendant()
         
         template_values = {
-                           'title': 'Register List',
+                           'title': 'Charge List',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_agent': current_agent
+                           'current_attendant': current_attendant
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('register/index.html')
+        template = JINJA_ENVIRONMENT.get_template('charge/index.html')
         self.response.write(template.render(template_values))
 
 class Update(BaseHandler):
@@ -99,14 +89,14 @@ class Update(BaseHandler):
         if self.authenticate() == False:
             return
         
-        current_agent = self.current_agent()
+        current_attendant = self.current_attendant()
         
-        agent = Agent.query(Agent.code==code).get()
+        attendant = Attendant.query(Attendant.code==code).get()
         
         template_values = {
                            'title': 'Update Profile',
-                           'current_agent': current_agent,
-                           'agent': agent
+                           'current_attendant': current_attendant,
+                           'attendant': attendant
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/update.html')
@@ -123,20 +113,20 @@ class Update(BaseHandler):
             email = self.request.get('email')
             last_modified = self.request.get('lastModified')
             
-            agent = Agent.query(Agent.code==code).get()
+            attendant = Attendant.query(Attendant.code==code).get()
             
-            vm = RegisterViewModel()
+            vm = ChargeViewModel()
             vm.code = code
             vm.name = name
             vm.address = address
             vm.tel = tel
             vm.hp = hp
             vm.email = email
-            vm.account_type = agent.account_type
+            vm.account_type = attendant.account_type
             vm.active = True
             vm.last_modified = last_modified
             
-            app_service = RegisterAppService()
+            app_service = ChargeAppService()
             app_service.update(vm)
         
             json_values['returnStatus'] = True
@@ -152,49 +142,48 @@ class Search(BaseHandler):
         json_values = {}
         
         try:
-            carPlate = self.request.get('carPlate')
-            name = self.request.get("name")
-            ic = self.request.get("ic")
-            current_agent = self.current_agent()
-            code = current_agent.code
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get("dateTo"))
+            lot_no = self.request.get("lotNo")
+            car_reg_no = self.request.get("carPlate")
+            current_attendant = self.current_attendant()
+            attendant_code = current_attendant.code
             
-            q = Register.query()
+            q = Charge.query()
             
-            if carPlate:
-                q = q.filter(Register.car_reg_no==carPlate)
+            if date_from:
+                q = q.filter(Charge.tran_date>=date_from)
                 
-            if name:
-                q = q.filter(Register.car_name==name)
+            if date_to:
+                q = q.filter(Charge.tran_date<=date_to)
                 
-            if ic:
-                q = q.filter(Register.car_ic==ic)
+            if attendant_code:
+                q = q.filter(Charge.attendant_code==attendant_code)
+            
+            if lot_no:
+                q = q.filter(Charge.lot_no==lot_no)
+            
+            if car_reg_no:
+                q = q.filter(Charge.car_reg_no==car_reg_no)
                 
-            if code:
-                q = q.filter(Register.agent_code==code)
-                
-            registers = q.fetch()
+            charges = q.fetch()
             
             # create json
             data = []
-            for register in registers:
+            for charge in charges:
                 data.append({
-                             'agentCode': register.agent_code,
-                             'date': DateTime.to_date_string(register.tran_date),
-                             'carPlate': register.car_reg_no,
-                             'name': register.car_name,
-                             'ic': register.car_ic,
-                             'address': register.car_address,
-                             'tel': register.car_tel,
-                             'hp': register.car_hp,
-                             'email': register.car_email,
-                             'tagNo': register.tag_code
+                             'attendantCode': charge.attendant_code,
+                             'date': DateTime.to_date_string(charge.tran_date),
+                             'lotNo': charge.lot_no,
+                             'carPlate': charge.car_reg_no,
+                             'remark': charge.remark,
                              })
-                
+
             json_values['returnStatus'] = True
             json_values['data'] = data
         except Exception, ex:
             json_values['returnStatus'] = False
-            json_values['returnMessage'] = str(ex)
+            json_values['returnMessage'] = str(ex) 
             
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);

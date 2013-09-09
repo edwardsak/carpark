@@ -80,7 +80,7 @@ class Update(BaseHandler):
                            'title': 'Update Profile',
                            'current_agent': current_agent,
                            'agent': agent
-                           } 
+                           }
         
         template = JINJA_ENVIRONMENT.get_template('account/update.html')
         self.response.write(template.render(template_values))
@@ -97,9 +97,10 @@ class Update(BaseHandler):
             last_modified = self.request.get('lastModified')
             
             agent = Agent.query(Agent.code==code).get()
+            current_agent = self.current_agent()
             
             vm = AgentViewModel()
-            vm.code = code
+            vm.code = current_agent.code
             vm.name = name
             vm.address = address
             vm.tel = tel
@@ -122,9 +123,16 @@ class Update(BaseHandler):
 
 class ChangePwd(BaseHandler):
     def get(self):       
+        # validate admin is logined or not
+        # if not redirect to login page
+        if self.authenticate() == False:
+            return
+        
+        current_agent = self.current_agent()
         
         template_values = {
                            'title': 'Change Password!',
+                           'current_agent': current_agent,
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/changepwd.html')

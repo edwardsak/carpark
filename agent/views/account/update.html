@@ -69,7 +69,7 @@ $("#btnSave").click(function(){
 			email: $("#email").val(),
 			lastModified: $("#lastModified").val()
 	};
-	
+
 	$.post("/agent/account/update/{{ agent.code }}/", postData, function(data, textResult) {
 		jsonData = JSON.parse(data);
 		
