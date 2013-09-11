@@ -9,7 +9,7 @@
 		<form action="" method="post">
 		<table>
 		<tr>
-			<td>User ID:</td>
+			<td>Attendant ID:</td>
 			<td>
 				<input type="text" id="code" />
 			</td>
@@ -39,18 +39,13 @@
 			<table border="1">
 				<thead>
 				  <tr>
-				  	<th>User ID</th>
+				  	<th>Attendant ID</th>
 				  	<th>Name</th>
-				    <th>Level</th>
-				    <th>Active</th>
 				  </tr>
 				 </thead>
 				 <tbody data-bind="template: { name: 'adminTemplate', foreach: lineItems }"></tbody>
 			</table>	
 		</form>
-
-		
-		
 	</div>
 </div> <!-- /row -->
 
@@ -58,14 +53,12 @@
 <tr>
     <td><a data-bind="text: code, attr: { href: urlUpdate, title: code }"></a></td>
     <td><span data-bind="text: name"></span></td>
-    <td><span data-bind="text: level"></span></td>
-	<td><span data-bind="text: active"></span></td>
 </tr>
 </script>
 			
 <script type="text/javascript">
 $("#btnCreate").click(function(){
-		window.location = "/admin/user/create/";
+	window.location = "/admin/attendant/create/";
 	});
 
 	// search
@@ -78,9 +71,7 @@ $("#btnCreate").click(function(){
 			var lineItemDisplay = new LineItemDisplay();
 			lineItemDisplay.code = ko.observable(dataRow.code);
 			lineItemDisplay.name = ko.observable(dataRow.name);
-			lineItemDisplay.level = ko.observable(dataRow.level);
-			lineItemDisplay.active = ko.observable(dataRow.active);
-			lineItemDisplay.urlUpdate = ko.observable("/admin/user/update/" + dataRow.code + "/");
+			lineItemDisplay.urlUpdate = ko.observable("/admin/attendant/update/" + dataRow.code + "/");
 			
 			self.lineItems.push(lineItemDisplay)
 			}
@@ -100,24 +91,22 @@ $("#btnCreate").click(function(){
 		
 		self.code;
 		self.name;
-		self.level;
-		self.active;
 		self.urlUpdate;
 	};
+
+$("#btnSearch").click(function() {
+	search();
+});
+
+function search() {
+	var postData = {
+			code: $("#code").val(),
+			name: $("#name").val()
+	};
 	
-	$("#btnSearch").click(function() {
-		search();
-	});
-	
-	function search() {
-		var postData = {
-				name: $("#name").val(),
-				code: $("#code").val(),
-				};
-		
-		$.post("/admin/user/search/", postData, function(data, textResult){
+	$.post("/admin/attendant/search/", postData, function(data, textResult){
 			jsonData = JSON.parse(data);
-				
+			
 			if(jsonData.returnStatus){
 				// jason data
 				vm.lineItems.removeAll();
@@ -130,7 +119,8 @@ $("#btnCreate").click(function(){
 			else{
 				$("#errorMessage").text(jsonData.errorMsg);
 			}
-		});
-	}
+	});
+}
 </script>
+
 {% endblock %}

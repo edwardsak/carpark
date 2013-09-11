@@ -51,6 +51,7 @@ class Create(BaseHandler):
             vm.agent_code = agent_code
             vm.car_reg_no = carPlate
             vm.sub_total = amount
+            vm.comm_per = 5
 
       
             app_service = TopUpAppService()
@@ -168,14 +169,12 @@ class Search(BaseHandler):
             data = []
             for topUp in topUps:
                 data.append({
-                             #'date': register.tran_date,
                              'agentCode': topUp.agent_code,
                              'carPlate': topUp.car_reg_no,
                              'date': DateTime.to_date_string(topUp.tran_date),
+                             'subTotal': topUp.sub_total,
+                             'commission': topUp.comm_amt,
                              'amount': topUp.amt,
-                             'paymentDate': DateTime.to_date_string(topUp.payment_date),
-                             'refNo': topUp.payment_ref_no,
-                             'paymentType': topUp.payment_type
                              })
                 
             json_values['returnStatus'] = True

@@ -1,7 +1,7 @@
-from base import BaseHandler
+from customer.controllers.base import BaseHandler
 from datalayer.models.models import Customer
-from datalayer.viewmodels.viewmodels import UserViewModel
-#from datalayer.appservice.user import UserAppService
+from datalayer.viewmodels.viewmodels import CustomerViewModel
+from datalayer.appservice.customer.account import AccountAppService
 
 import json
 import os
@@ -31,24 +31,24 @@ class Login(BaseHandler):
         json_values = {}
         
         try:
-            code = self.request.get('code')
+            ic = self.request.get('ic')
             pwd = self.request.get('pwd')
             
-            if code is None:
-                raise Exception('You must enter an Customer ID.')
+            if ic is None:
+                raise Exception('You must enter an CustomerAdmin ID.')
             
             if pwd is None:
                 raise Exception('You must enter a Password.')
             
-            vm = UserViewModel()
-            vm.code = code
+            vm = CustomerViewModel()
+            vm.ic = ic
             vm.pwd = pwd
             
-            #app_service = UserAppService()
-            #app_service.login(vm)
+            app_service = AccountAppService()
+            app_service.login(vm)
             
             # save to session
-            self.session['customer_code'] = vm.code
+            self.session['customer_ic'] = vm.ic
             
             json_values['returnStatus'] = True
         except Exception, ex:
@@ -60,11 +60,11 @@ class Login(BaseHandler):
              
 class Logout(BaseHandler):
     def get(self):
-        if self.session.get('customer_code'):
-            del self.session['customer_code']
-        
-        self.redirect("/customer/account/login")
-        
+        if self.session.get('customer_ic'):
+            del self.session['customer_ic']
+            
+        self.redirect("/customer/account/login/")
+            
 class Index(BaseHandler):       
     def get(self):
         current_customer = self.current_customer()
@@ -75,8 +75,8 @@ class Index(BaseHandler):
         customer = Customer.query().fetch()
    
         template_values = {
-                           'title': 'Update Profile',
-                           #'current_customer': current_customer
+                           'title': 'Customer Home',
+                           'current_customer': current_customer,
                            'customer': customer
                            }
         
@@ -92,7 +92,7 @@ class Update(BaseHandler):
         
         current_customer = self.current_customer()
         
-        customer = Customer.query(Customer.ic==ic).get()
+        customer = Customer.query(Customer.ic==current_customer.ic).get()
         
         template_values = {
                            'title': 'Update Profile',
@@ -107,22 +107,30 @@ class Update(BaseHandler):
         json_values = {}
         
         try:
-            name = self.request.get('name')
+            address = self.request.get('address')
+            tel = self.request.get('tel')
+            hp = self.request.get('hp')
+            email = self.request.get('email')
             last_modified = self.request.get('lastModified')
             
-            customer = Customer.query(Customer.ic==ic).get()
+            #customer = Customer.query(Customer.ic==ic).get()
 
-            current_attendant = self.current_attendant()
+            current_customer = self.current_customer()
             
-            vm = UserViewModel()
-            vm.code = current_attendant.code
-            vm.name = name
+            vm = CustomerViewModel()
+            vm.name = current_customer.name
+            vm.ic = current_customer.ic
+            vm.code = vm.ic
+            vm.address = address
+            vm.tel = tel
+            vm.hp = hp
+            vm.email = email
             vm.active = True
             vm.comm_per = 5
             vm.last_modified = last_modified
             
-            #app_service = AccountAppService()
-            #app_service.update(vm)
+            app_service = AccountAppService()
+            app_service.update(vm)
         
             json_values['returnStatus'] = True
         except Exception, ex:
@@ -139,11 +147,11 @@ class ChangePwd(BaseHandler):
         if self.authenticate() == False:
             return
         
-        current_attendant = self.current_attendant()
+        current_customer = self.current_customer()
         
         template_values = {
                            'title': 'Change Password!',
-                           'current_attendant': current_attendant,
+                           'current_customer': current_customer,
                            } 
         
         template = JINJA_ENVIRONMENT.get_template('account/changepwd.html')
@@ -153,18 +161,19 @@ class ChangePwd(BaseHandler):
         json_values = {}
         
         try:
-            current_attendant = self.current_attendant()
+            current_customer = self.current_customer()
             
             pwd = self.request.get('newPwd')
             old_pwd = self.request.get('oldPwd')
       
-            vm = UserViewModel()
-            vm.code = current_attendant.code
+            vm = CustomerViewModel()
+            vm.ic = current_customer.ic
+            vm.code = vm.ic
             vm.pwd = pwd
             vm.old_pwd = old_pwd
             
-            #app_service = AccountAppService()
-            #app_service.change_pwd(vm)
+            app_service = AccountAppService()
+            app_service.change_pwd(vm)
             
             json_values['returnStatus'] = True
         except Exception, ex:

@@ -55,12 +55,12 @@ class Create(BaseHandler):
             vm.tran_date = date
             vm.agent_code = agent_code
             vm.car_reg_no = carPlate
-            vm.car_name = name
-            vm.car_ic = ic
-            vm.car_address = address
-            vm.car_tel = tel
-            vm.car_hp = hp
-            vm.car_email = email
+            vm.customer_name = name
+            vm.customer_ic = ic
+            vm.customer_address = address
+            vm.customer_tel = tel
+            vm.customer_hp = hp
+            vm.customer_email = email
             vm.tag_code = tagNo
       
             app_service = RegisterAppService()
@@ -152,22 +152,22 @@ class Search(BaseHandler):
         json_values = {}
         
         try:
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get("dateTo"))
             carPlate = self.request.get('carPlate')
-            name = self.request.get("name")
-            ic = self.request.get("ic")
             current_agent = self.current_agent()
             code = current_agent.code
             
             q = Register.query()
             
+            if date_from:
+                q = q.filter(Register.tran_date>=date_from)
+                
+            if date_to:
+                q = q.filter(Register.tran_date<=date_to)
+                
             if carPlate:
                 q = q.filter(Register.car_reg_no==carPlate)
-                
-            if name:
-                q = q.filter(Register.car_name==name)
-                
-            if ic:
-                q = q.filter(Register.car_ic==ic)
                 
             if code:
                 q = q.filter(Register.agent_code==code)
@@ -181,12 +181,12 @@ class Search(BaseHandler):
                              'agentCode': register.agent_code,
                              'date': DateTime.to_date_string(register.tran_date),
                              'carPlate': register.car_reg_no,
-                             'name': register.car_name,
-                             'ic': register.car_ic,
-                             'address': register.car_address,
-                             'tel': register.car_tel,
-                             'hp': register.car_hp,
-                             'email': register.car_email,
+                             'name': register.customer_name,
+                             'ic': register.customer_ic,
+                             'address': register.customer_address,
+                             'tel': register.customer_tel,
+                             'hp': register.customer_hp,
+                             'email': register.customer_email,
                              'tagNo': register.tag_code
                              })
                 

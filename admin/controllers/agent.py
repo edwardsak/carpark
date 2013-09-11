@@ -147,35 +147,39 @@ class Update(BaseHandler):
 
 class Search(BaseHandler):
     def post(self):
-        name = self.request.get('name')
-        code = self.request.get("code")
+        json_values = {}
         
-        q = Agent.query()
-        
-        if name:
-            q = q.filter(Agent.name==name)
+        try:
+            name = self.request.get('name')
+            code = self.request.get("code")
             
-        if code:
-            q = q.filter(Agent.code==code)
+            q = Agent.query()
             
-        agents = q.fetch()
-        
-        # create json
-        data = []
-        for agent in agents:
-            data.append({
-                         'code':agent.code,
-                         'name': agent.name,
-                         'address': agent.address,
-                         'tel': agent.tel,
-                         'hp': agent.hp,
-                         'email': agent.email,
-                         })
+            if name:
+                q = q.filter(Agent.name==name)
+                
+            if code:
+                q = q.filter(Agent.code==code)
+                
+            agents = q.fetch()
             
-        json_values = {
-                       'returnStatus': True,
-                       'data': data
-                       }
+            # create json
+            data = []
+            for agent in agents:
+                data.append({
+                             'code':agent.code,
+                             'name': agent.name,
+                             'address': agent.address,
+                             'tel': agent.tel,
+                             'hp': agent.hp,
+                             'email': agent.email,
+                             })
+                
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
         
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);

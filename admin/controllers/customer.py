@@ -1,8 +1,8 @@
 from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
-from datalayer.models.models import User
-from datalayer.viewmodels.viewmodels import UserViewModel
-from datalayer.appservice.admin.user import UserAppService
+from datalayer.models.models import Customer
+from datalayer.viewmodels.viewmodels import CustomerViewModel
+from datalayer.appservice.admin.customer import CustomerAppService
 
 import os
 import jinja2
@@ -28,7 +28,7 @@ class Create(BaseHandler):
                            'current_user': current_user
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('/attendant/create.html')
+        template = JINJA_ENVIRONMENT.get_template('/customer/create.html')
         self.response.write(template.render(template_values))
         
     def post(self):
@@ -36,18 +36,26 @@ class Create(BaseHandler):
         
         try:
             # get post data
+            ic = self.request.get("customerIc")
             name = self.request.get("name")
-            customer_code = self.request.get("customerCode")
             pwd = self.request.get("pwd")
+            address = self.request.get("address")
+            tel = self.request.get("tel")
+            hp = self.request.get("hp")
+            email = self.request.get("email")
     
             #save data to view model class
-            vm = UserViewModel()
+            vm = CustomerViewModel()
+            vm.ic = ic
             vm.name = name
-            vm.code = customer_code
             vm.pwd = pwd
+            vm.address = address
+            vm.tel = tel
+            vm.hp = hp
+            vm.email = email
             vm.active = True
             
-            app_service = UserAppService()
+            app_service = CustomerAppService()
             app_service.create(vm)
             
             # return status
@@ -59,7 +67,6 @@ class Create(BaseHandler):
         json_str = json.dumps(json_values)
         self.response.out.write(json_str)
 
-
 class Index(BaseHandler):
     def get(self):
         # validate admin is logined or not
@@ -69,20 +76,20 @@ class Index(BaseHandler):
         
         current_user = self.current_user()
         
-        users = User.query().fetch()
+        customers = Customer.query().fetch()
         
         template_values = {
                            'title': 'Customer List',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_user': current_user,
-                           'users': users
+                           'customers': customers
                            }
         
         template = JINJA_ENVIRONMENT.get_template('customer/index.html')
         self.response.write(template.render(template_values))
         
 class Update(BaseHandler):
-    def get(self, code):
+    def get(self, ic):
         # validate admin is logined or not
         # if not redirect to login page
         if self.authenticate() == False:
@@ -90,38 +97,44 @@ class Update(BaseHandler):
         
         current_user = self.current_user()
         
-        user = User.query(User.code==code).get()
+        customer = Customer.query(Customer.ic==ic).get()
         
         template_values = {
-                           'title': 'Update Attendant',
+                           'title': 'Update Customer',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_user': current_user,
-                           'user': user
+                           'customer': customer
                            }
         
         template = JINJA_ENVIRONMENT.get_template('customer/update.html')
         self.response.write(template.render(template_values))
         
-    def post(self, code):
+    def post(self, ic):
         json_values = {}
         
         try:
+            ic = self.request.get('ic')
             name = self.request.get('name')
-            code = self.request.get("code")
-            pwd = self.request.get("pwd")
+            address = self.request.get("address")
+            tel = self.request.get("tel")
+            hp = self.request.get("hp")
+            email = self.request.get("email")
             last_modified = self.request.get('lastModified')
             
             current_user = self.current_user()
             
-            vm = UserViewModel()
+            vm = CustomerViewModel()
             vm.name = name
-            vm.code = code
-            vm.pwd = pwd
+            vm.ic = ic
+            vm.address = address
+            vm.tel = tel
+            vm.hp = hp
+            vm.email = email
             vm.active = True
             vm.last_modified = last_modified
             vm.user_code = current_user.code
             
-            app_service = UserAppService()
+            app_service = CustomerAppService()
             app_service.update(vm)
         
             json_values['returnStatus'] = True
@@ -134,31 +147,39 @@ class Update(BaseHandler):
 
 class Search(BaseHandler):
     def post(self):
-        name = self.request.get('name')
-        customer_code = self.request.get("customerCode")
+        json_values = {}
         
-        q = User.query()
-        
-        if name:
-            q = q.filter(User.name==name)
+        try:
+            name = self.request.get('name')
+            customer_ic = self.request.get("ic")
             
-        if customer_code:
-            q = q.filter(User.code==customer_code)
+            q = Customer.query()
             
-        users = q.fetch()
-        
-        # create json
-        data = []
-        for user in users:
-            data.append({
-                         'customerCode':user.code,
-                         'name': user.name,
-                         })
+            if name:
+                q = q.filter(Customer.name==name)
+                
+            if customer_ic:
+                q = q.filter(Customer.ic==customer_ic)
+                
+            customers = q.fetch()
             
-        json_values = {
-                       'returnStatus': True,
-                       'data': data
-                       }
+            # create json
+            data = []
+            for customer in customers:
+                data.append({
+                             'ic':customer.ic,
+                             'name': customer.name,
+                             'address': customer.address,
+                             'tel': customer.tel,
+                             'hp': customer.hp,
+                             'email': customer.email,
+                             })
+                
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
         
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);

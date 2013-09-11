@@ -108,7 +108,6 @@ class Update(BaseHandler):
         try:
             name = self.request.get('name')
             level = int(self.request.get("level"))
-            active = bool(self.request.get("active"))
             last_modified = self.request.get('lastModified')
             
             current_user = self.current_user()
@@ -117,7 +116,7 @@ class Update(BaseHandler):
             vm.code = code
             vm.name = name
             vm.level = level
-            vm.active = active
+            vm.active = True
             vm.last_modified = last_modified
             vm.user_code = current_user.code
             
@@ -134,33 +133,37 @@ class Update(BaseHandler):
 
 class Search(BaseHandler):
     def post(self):
-        name = self.request.get('name')
-        code = self.request.get("code")
+        json_values = {}
         
-        q = User.query()
-        
-        if name:
-            q = q.filter(User.name==name)
+        try:
+            name = self.request.get('name')
+            code = self.request.get("code")
             
-        if code:
-            q = q.filter(User.code==code)
+            q = User.query()
             
-        users = q.fetch()
-        
-        # create json
-        data = []
-        for user in users:
-            data.append({
-                         'code':user.code,
-                         'name': user.name,
-                         'level': user.level,
-                         'Active': user.active,
-                         })
+            if name:
+                q = q.filter(User.name==name)
+                
+            if code:
+                q = q.filter(User.code==code)
+                
+            users = q.fetch()
             
-        json_values = {
-                       'returnStatus': True,
-                       'data': data
-                       }
+            # create json
+            data = []
+            for user in users:
+                data.append({
+                             'code':user.code,
+                             'name': user.name,
+                             'level': user.level,
+                             'active': user.active,
+                             })
+                
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
         
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);

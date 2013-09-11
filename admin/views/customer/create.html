@@ -9,9 +9,9 @@
 <form action="" method="post">
 	<table>
 		<tr>
-			<td>Customer ID:</td>
+			<td>Customer IC:</td>
 			<td>
-				<input type="text" id="customerCode" />
+				<input type="text" id="customerIc" />
 			</td>
 		</tr>
 		<tr>
@@ -21,9 +21,27 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Password:</td>
+			<td>Address:</td>
 			<td>
-				<input type="text" id="pwd" />
+				<input type="text" id="address" />
+			</td>
+		</tr>
+		<tr>
+			<td>Tel:</td>
+			<td>
+				<input type="text" id="tel" />
+			</td>
+		</tr>
+		<tr>
+			<td>Hp:</td>
+			<td>
+				<input type="text" id="hp" />
+			</td>
+		</tr>
+		<tr>
+			<td>Email:</td>
+			<td>
+				<input type="text" id="email" />
 			</td>
 		</tr>	
 	</table>
@@ -43,9 +61,12 @@
 <script type="text/javascript">
 	$("#btnSave").click(function(){
 		var postData = {
-				attendantCode: $("#customerCode").val(),
+				customerIc: $("#customerIc").val(),
 				name: $("#name").val(),
-				pwd: $("#pwd").val(),
+				address: $("#address").val(),
+				tel: $("#tel").val(),
+				hp: $("#hp").val(),
+				email: $("#email").val(),
 		};
 		
 		$.post("/admin/customer/create/", postData, function(data, textResult){

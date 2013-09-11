@@ -76,8 +76,10 @@ app = webapp2.WSGIApplication([
                             
                             ('/customer/', customer_home.Index),
                             ('/customer/about/', customer_home.About),
-                            ('/customer/account/', customer_account.Index),
+                            ('/customer/home/balance/', customer_home.Balance),
+                            ('/customer/account/update/([^/]+)/', customer_account.Update),
                             ('/customer/account/login/', customer_account.Login),
+                            ('/customer/account/logout/', customer_account.Logout),
                             ('/customer/account/changepwd/', customer_account.ChangePwd),
                             
                             ('/init/', init.Init),

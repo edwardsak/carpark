@@ -115,7 +115,8 @@ $("#btnSearch").click(function() {
 function search() {
 	var postData = {
 			carPlate: $("#carPlate").val(),
-			date: $("#date").val(),
+			dateFrom: $("#dateFrom").val(),
+			dateTo: $("#dateTo").val(),
 	};
 	
 	$.post("/agent/register/search/", postData, function(data, textResult){

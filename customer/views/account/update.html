@@ -62,20 +62,20 @@
 <script type="text/javascript">
 $("#btnSave").click(function(){
 	var postData = {
-			ic: {{ customer.ic}},
-			name: {{ customer.name}},
+			ic: {{ customer.ic }},
+			name: {{ customer.name }},
 			address: $("#address").val(),
 			tel: $("#tel").val(),
 			hp: $("#hp").val(),
 			email: $("#email").val(),
 			lastModified: $("#lastModified").val()
 	};
-	
-	$.post("/admin/customer/update/{{ customer.ic }}/", postData, function(data, textResult) {
+
+	$.post("/customer/account/update/{{ customer.ic }}/", postData, function(data, textResult) {
 		jsonData = JSON.parse(data);
 		
 		if (jsonData.returnStatus) {
-			window.location = "/admin/customer/";
+			window.location = "/customer/";
 		}
 		else {
 			$("#errorMessage").text(jsonData.returnMessage);

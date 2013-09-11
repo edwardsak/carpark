@@ -37,7 +37,7 @@ class Create(BaseHandler):
         try:
             # get post data
             name = self.request.get("name")
-            attendant_code = self.request.get("attendantCode")
+            attendant_code = self.request.get("code")
             pwd = self.request.get("pwd")            
             current_user = self.current_user()
             user_code = current_user.code
@@ -135,31 +135,35 @@ class Update(BaseHandler):
 
 class Search(BaseHandler):
     def post(self):
-        name = self.request.get('name')
-        attendant_code = self.request.get("attendantCode")
+        json_values = {}
         
-        q = Attendant.query()
-        
-        if name:
-            q = q.filter(Attendant.name==name)
+        try:
+            name = self.request.get('name')
+            attendant_code = self.request.get("code")
             
-        if attendant_code:
-            q = q.filter(Attendant.code==attendant_code)
+            q = Attendant.query()
             
-        attendants = q.fetch()
-        
-        # create json
-        data = []
-        for attendant in attendants:
-            data.append({
-                         'attendantCode':attendant.code,
-                         'name': attendant.name,
-                         })
+            if name:
+                q = q.filter(Attendant.name==name)
+                
+            if attendant_code:
+                q = q.filter(Attendant.code==attendant_code)
+                
+            attendants = q.fetch()
             
-        json_values = {
-                       'returnStatus': True,
-                       'data': data
-                       }
+            # create json
+            data = []
+            for attendant in attendants:
+                data.append({
+                             'code':attendant.code,
+                             'name': attendant.name,
+                             })
+                
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
         
-        jsonStr = json.dumps(json_values)
-        self.response.out.write(jsonStr);
+        json_str = json.dumps(json_values)
+        self.response.out.write(json_str);

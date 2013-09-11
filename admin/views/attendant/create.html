@@ -11,7 +11,7 @@
 		<tr>
 			<td>Attendant ID:</td>
 			<td>
-				<input type="text" id="attendantCode" />
+				<input type="text" id="code" />
 			</td>
 		</tr>
 		<tr>
@@ -43,7 +43,7 @@
 <script type="text/javascript">
 	$("#btnSave").click(function(){
 		var postData = {
-				attendantCode: $("#attendantCode").val(),
+				code: $("#code").val(),
 				name: $("#name").val(),
 				pwd: $("#pwd").val(),
 		};

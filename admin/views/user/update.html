@@ -24,7 +24,7 @@
 		<tr>
 			<td>Level:</td>
 			<td>
-				<select id="level" value="{{ user.level }}">
+				<select id="level" value="options[{{ user.level }}].selected">
         		<option value="2">Super User</option>
         		<option value="3">Limited User</option>
         		<option value="4">Manager</option>
@@ -53,18 +53,17 @@
 </div>
 
 <script type="text/javascript">
+//checking checkbox
+if (!$('#checkbox').is(':checked')){
+	$("#errorMessage").text("Must tick the Active checkbox");
+};
+
+// save
 $("#btnSave").click(function(){
 	var postData = {
 			name: $("#name").val(),
 			level: $("#level").val(),
-			
-			//After submitting the form check it with:
-			//if jQuery('#checkbox').is(':checked'){
-				//active: "True";
-			//}
-			//else{
-				//active: "False";
-			//}
+			lastModified: $("#lastModified").val()
 	};
 	
 	$.post("/admin/user/update/{{ user.code }}/", postData, function(data, textResult) {
