@@ -1,0 +1,126 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+		<form action="" method="post">
+		<table>
+		<tr>
+			<td>Date:</td>
+			<td>
+				<input type="text" id="date" />
+			</td>
+		</tr>
+		</table>
+		<div>
+	   		<span id="errorMessage" class="error"></span>
+	   	</div>
+		<div style="display: inline;">
+			<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
+		</form>
+	</div>
+	
+	<div class="col-lg-8">
+		<form action="" method="post">
+			<table border="1">
+				<thead>
+				  <tr>
+				  	<th>Date</th>
+				    <th>Code</th>
+				    <th>Description</th>
+				    <th>Db (RM)</th>
+				    <th>Cr (RM)</th>
+				    <th>Bal (RM)</th>
+				  </tr>
+				 </thead>
+				 <tbody data-bind="template: { name: 'agentTemplate', foreach: lineItems }"></tbody>
+			</table>	
+		</form>
+	</div>
+</div> <!-- /row -->
+
+<script type="text/html" id="agentTemplate">
+<tr>
+	<td><span data-bind="text: tranDate"></span></td>
+    <td><span data-bind="text: tranCode"></span></td>
+    <td><span data-bind="text: description"></span></td>
+	<td><span data-bind="text: dbAmt"></span></td>
+	<td><span data-bind="text: crAmt"></span></td>
+	<td><span data-bind="text: balAmt"></span></td>
+</tr>
+</script>
+			
+<script type="text/javascript">
+// search
+function viewModel() {
+	var self = this;
+	
+	self.lineItems = ko.observableArray();
+	
+	self.addLineItem = function(dataRow) {
+		var lineItemDisplay = new LineItemDisplay();
+		lineItemDisplay.tranDate = ko.observable(dataRow.tranDate);
+		lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
+		lineItemDisplay.description = ko.observable(dataRow.description);
+		lineItemDisplay.dbAmt = ko.observable(dataRow.dbAmt);
+		lineItemDisplay.crAmt = ko.observable(dataRow.crAmt);
+		lineItemDisplay.balAmt = ko.observable(dataRow.balAmt);
+		
+		self.lineItems.push(lineItemDisplay)
+	};
+}
+var vm = new viewModel();
+
+ko.applyBindings(vm);
+
+var LineItemDisplay = function() {
+	var self = this;
+	
+	self.tranDate;
+	self.tranCode;
+	self.description;
+	self.dbAmt;
+	self.crAmt;
+	self.balAmt;
+};
+
+$("#btnSearch").click(function() {
+	search();
+});
+
+function search() {
+	var postData = {
+			date: $("#date").val(),
+			};
+	
+	$.post("/agent/statement/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			// jason data
+			vm.lineItems.removeAll();
+			
+			for (var i = 0; i < jsonData.data.length; i++) {
+				var dataRow = jsonData.data[i];
+				vm.addLineItem(dataRow);
+			}
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+}
+
+$(function() {
+  	$( "#date" ).datepicker({
+  	    dateFormat: 'dd/mm/yy',
+  	    altField: '#thealtdate',
+  	    altFormat: 'yy-mm-dd'
+  	});
+});
+</script>
+{% endblock %}

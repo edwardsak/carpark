@@ -34,10 +34,10 @@ class Login(BaseHandler):
             ic = self.request.get('ic')
             pwd = self.request.get('pwd')
             
-            if ic is None:
-                raise Exception('You must enter an CustomerAdmin ID.')
+            if ic is None or len(ic) < 1:
+                raise Exception('You must enter an IC/PP No.')
             
-            if pwd is None:
+            if pwd is None or len(pwd) < 1:
                 raise Exception('You must enter a Password.')
             
             vm = CustomerViewModel()
@@ -128,6 +128,7 @@ class Update(BaseHandler):
             vm.active = True
             vm.comm_per = 5
             vm.last_modified = last_modified
+            vm.user_code = current_customer.ic
             
             app_service = AccountAppService()
             app_service.update(vm)

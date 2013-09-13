@@ -111,13 +111,21 @@
 	
 	$("#btnSearch").click(function() {
 		search();
+		clear();
+		//document.forms[0].reset();
 	});
+	function clear(){
+		$("#dateFrom").val("");
+		$("#dateTo").val("");
+		$("#lotNo").val("");
+		
+	};
 	
 	function search() {
 		var postData = {
 				dateFrom: $("#dateFrom").val(),
 				dateTo: $("#dateTo").val(),
-				lotNo: $("lotNo").val(),
+				lotNo: $("#lotNo").val(),
 				carPlate: $("#carPlate").val()
 				};
 		
@@ -134,7 +142,7 @@
 				}
 			}
 			else{
-				$("#errorMessage").text(jsonData.errorMsg);
+				$("#errorMessage").text(jsonData.returnMessage);
 			}
 		});
 	}

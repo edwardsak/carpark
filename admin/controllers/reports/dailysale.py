@@ -1,7 +1,8 @@
-from agent.controllers.base import BaseHandler
+from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
-from datalayer.models.models import Agent
-from datalayer.appservice.agent.statement import Statement as AgentStatement
+from datalayer.models.models import User
+from datalayer.appservice.admin.reports.sale import SaleByDay
+
 
 import os
 import jinja2
@@ -12,24 +13,24 @@ JINJA_ENVIRONMENT = jinja2.Environment(
                                        extensions=['jinja2.ext.autoescape']
                                        )
 
-class Statement(BaseHandler):
+class DailySale(BaseHandler):
     def get(self):
         # validate agent is logined or not
         # if not redirect to login page
         if self.authenticate() == False:
             return
         
-        current_agent = self.current_agent()
-        agents = Agent.query().fetch()
+        current_user = self.current_user()
+        users = User.query().fetch()
         
         template_values = {
-                           'title': 'Statement',
+                           'title': 'Agent Daily Sale',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_agent': current_agent,
-                           'agents': agents
+                           'current_user': current_user,
+                           'users': users
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('statement/index.html')
+        template = JINJA_ENVIRONMENT.get_template('report/salebyday.html')
         self.response.write(template.render(template_values))
         
     def post(self):
@@ -37,13 +38,11 @@ class Statement(BaseHandler):
         
         try:
             #get
-            current_agent = self.current_agent()
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get('dateTo'))
             
-            agent_code = current_agent.code
-            tran_date = DateTime.to_date(self.request.get('date'))
-            
-            agent_statement = AgentStatement()
-            values = agent_statement.get(agent_code, tran_date)
+            sale_by_day = SaleByDay()
+            values = sale_by_day.get(date_from, date_to)
             
             data = []
             for value in values:

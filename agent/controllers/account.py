@@ -34,10 +34,10 @@ class Login(BaseHandler):
             code = self.request.get('code')
             pwd = self.request.get('pwd')
             
-            if code is None:
+            if code is None or len(code) < 1:
                 raise Exception('You must enter an Agent ID.')
             
-            if pwd is None:
+            if pwd is None or len(pwd) < 1:
                 raise Exception('You must enter a Password.')
             
             vm = AgentViewModel()

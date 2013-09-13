@@ -1,35 +1,37 @@
-from agent.controllers.base import BaseHandler
+from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
-from datalayer.models.models import Agent
-from datalayer.appservice.agent.statement import Statement as AgentStatement
+from datalayer.models.models import User
+from datalayer.appservice.admin.reports.profit import ProfitByMonth
+
+
 
 import os
 import jinja2
 import json
 
 JINJA_ENVIRONMENT = jinja2.Environment(
-                                       loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), '../views')),
+                                       loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), '../../views')),
                                        extensions=['jinja2.ext.autoescape']
                                        )
 
-class Statement(BaseHandler):
+class MonthlyProfit(BaseHandler):
     def get(self):
         # validate agent is logined or not
         # if not redirect to login page
         if self.authenticate() == False:
             return
         
-        current_agent = self.current_agent()
-        agents = Agent.query().fetch()
+        current_user = self.current_user()
+        users = User.query().fetch()
         
         template_values = {
-                           'title': 'Statement',
+                           'title': 'Monthly Profit',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
-                           'current_agent': current_agent,
-                           'agents': agents
+                           'current_user': current_user,
+                           'users': users
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('statement/index.html')
+        template = JINJA_ENVIRONMENT.get_template('reports/profitbymonth.html')
         self.response.write(template.render(template_values))
         
     def post(self):
@@ -37,23 +39,20 @@ class Statement(BaseHandler):
         
         try:
             #get
-            current_agent = self.current_agent()
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get('dateTo'))
             
-            agent_code = current_agent.code
-            tran_date = DateTime.to_date(self.request.get('date'))
-            
-            agent_statement = AgentStatement()
-            values = agent_statement.get(agent_code, tran_date)
+            profit_by_month = ProfitByMonth()
+            values = profit_by_month.get(date_from, date_to)
             
             data = []
             for value in values:
                 data.append({
                              'tranDate': DateTime.to_date_string(value.tran_date),
-                             'tranCode': value.tran_code,
-                             'description': value.description,
-                             'dbAmt': value.db_amt,
-                             'crAmt': value.cr_amt,
-                             'balAmt': value.bal_amt
+                             'chargeAmt': value.charge_sub_total,
+                             'chargeComm': value.charge_comm_amt,
+                             'topupComm': value.top_up_comm_amt,
+                             'total': value.amt
                              })
                 
             json_values['returnStatus'] = True

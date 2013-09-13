@@ -119,7 +119,7 @@ function search() {
 			dateTo: $("#dateTo").val(),
 	};
 	
-	$.post("/agent/register/search/", postData, function(data, textResult){
+	$.post("/agent/topup/search/", postData, function(data, textResult){
 			jsonData = JSON.parse(data);
 			
 			if(jsonData.returnStatus){
@@ -132,7 +132,7 @@ function search() {
 				}
 			}
 			else{
-				$("#errorMessage").text(jsonData.errorMsg);
+				$("#errorMessage").text(jsonData.returnMessage);
 			}
 	});
 }

@@ -126,11 +126,13 @@ class Update(BaseHandler):
             vm = CustomerViewModel()
             vm.name = name
             vm.ic = ic
+            vm.code = vm.ic
             vm.address = address
             vm.tel = tel
             vm.hp = hp
             vm.email = email
             vm.active = True
+            vm.comm_per = 5
             vm.last_modified = last_modified
             vm.user_code = current_user.code
             

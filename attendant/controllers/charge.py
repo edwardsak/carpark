@@ -43,7 +43,6 @@ class Create(BaseHandler):
             date = DateTime.to_date(self.request.get("date"))
             lot_no = self.request.get("lotNo")
             car_reg_no = self.request.get("carPlate")
-            remark = self.request.get("remark")
     
             #save data to view model class
             vm = ChargeViewModel()
@@ -51,7 +50,6 @@ class Create(BaseHandler):
             vm.attendant_code = attendant_code
             vm.lot_no = lot_no
             vm.car_reg_no = car_reg_no
-            vm.remark = remark
       
             app_service = ChargeAppService()
             app_service.create(vm)
@@ -142,8 +140,8 @@ class Search(BaseHandler):
         json_values = {}
         
         try:
-            date_from = DateTime.to_date(self.request.get('dateFrom'))
-            date_to = DateTime.to_date(self.request.get("dateTo"))
+            date_from = self.request.get('dateFrom')
+            date_to = self.request.get("dateTo")
             lot_no = self.request.get("lotNo")
             car_reg_no = self.request.get("carPlate")
             current_attendant = self.current_attendant()
@@ -151,20 +149,22 @@ class Search(BaseHandler):
             
             q = Charge.query()
             
-            if date_from:
+            if date_from and len(date_from) > 0:
+                date_from = DateTime.to_date(date_from)
                 q = q.filter(Charge.tran_date>=date_from)
                 
-            if date_to:
+            if date_to and len(date_to) > 0:
+                date_to = DateTime.to_date(date_to)
                 q = q.filter(Charge.tran_date<=date_to)
-                
-            if attendant_code:
-                q = q.filter(Charge.attendant_code==attendant_code)
             
             if lot_no:
                 q = q.filter(Charge.lot_no==lot_no)
             
             if car_reg_no:
                 q = q.filter(Charge.car_reg_no==car_reg_no)
+                
+            if (not date_from and date_to and lot_no and car_reg_no):    
+                q = q.filter(Charge.attendant_code==attendant_code)          
                 
             charges = q.fetch()
             

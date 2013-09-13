@@ -113,7 +113,13 @@ $("#btnCreate").click(function(){
 
 $("#btnSearch").click(function() {
 	search();
+	clear();
 });
+
+function clear(){
+	$("#code").val("");
+	$("#name").val("");	
+};
 
 function search() {
 	var postData = {
@@ -134,7 +140,7 @@ function search() {
 				}
 			}
 			else{
-				$("#errorMessage").text(jsonData.errorMsg);
+				$("#errorMessage").text(jsonData.returnMessage);
 			}
 	});
 }

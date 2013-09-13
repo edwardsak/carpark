@@ -1,0 +1,115 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<br>
+	<div class="col-lg-16" >
+	
+	<table>
+		<tr>
+			<td>Closing Date:</td>
+			<td>
+				<span id="date" />{{ closingDate }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Audit Lock:</td>
+			<td>
+				<span id="audit" />{{ auditLock }}</span>
+			</td>
+		</tr>
+	</table>
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+  	
+  	<br>
+  	<br>
+  	
+   	<div style="display: inline-block;">
+		<input type="button" id="btnLock" value="Lock" style="width:120px;height:70px; font-size: 30px;"/>
+	</div>
+	&nbsp;
+	<div style="display: inline-block;">
+		<input type="button" id="btnUnlock" value="Unlock" style="width:120px;height:70px; font-size: 30px;"/>
+	</div>
+	&nbsp;
+
+	<div style="display: block;">
+		<input type="button" id="btnClosing" value="Closing" style="width:120px;height:70px; font-size: 30px;"/>
+	</div>
+	
+	<div style="display: inline-block;">
+		<input type="button" id="btnRevert" value="Revert" style="width:120px;height:70px; font-size: 30px;"/>
+	</div>
+
+	</div> <!-- /classrow -->
+		
+
+<script type="text/javascript">	
+$("#btnLock").click(function(){
+	var postData = {};
+	
+	$.post("/admin/closing/lock/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/admin/closing/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
+});
+
+$("#btnUnlock").click(function(){
+	var postData = {};
+	
+	$.post("/admin/closing/unlock/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/admin/closing/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
+});
+
+$("#btnClosing").click(function(){
+	var postData = {};
+	
+	$.post("/admin/closing/close/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/admin/closing/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
+});
+
+$("#btnRevert").click(function(){
+	var postData = {};
+	
+	$.post("/admin/closing/revert/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/admin/closing/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+
+});
+</script>
+{% endblock %}

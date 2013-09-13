@@ -143,25 +143,27 @@ class Search(BaseHandler):
         json_values = {}
         
         try:
-            date_from = DateTime.to_date(self.request.get('dateFrom'))
-            date_to = DateTime.to_date(self.request.get("dateTo"))
+            date_from = self.request.get('dateFrom')
+            date_to = self.request.get("dateTo")
+            carPlate = self.request.get('carPlate')
             current_agent = self.current_agent()
             agent_code = current_agent.code
-            carPlate = self.request.get('carPlate')
-            
+                        
             q = TopUp.query()
             
-            if date_from:
+            if date_from and len(date_from) > 0:
+                date_from = DateTime.to_date(date_from)
                 q = q.filter(TopUp.tran_date>=date_from)
                 
-            if date_to:
+            if date_to and len(date_to) > 0:
+                date_to = DateTime.to_date(date_to)
                 q = q.filter(TopUp.tran_date<=date_to)
-                
-            if agent_code:
-                q = q.filter(TopUp.agent_code==agent_code)
-               
+            
             if carPlate:
                 q = q.filter(TopUp.car_reg_no==carPlate)
+                
+            if (not date_from and date_to and carPlate):  
+                q = q.filter(TopUp.agent_code==agent_code)
                 
             topUps = q.fetch()
             

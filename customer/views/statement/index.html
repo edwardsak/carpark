@@ -2,18 +2,22 @@
 
 {% block main %}
 <h2>{{ title }}</h2>
-
-<div class="row">	
+<br>
+<span> Car Reg. No: {{ register.car_reg_no }}</span>
+<br>
+<div class="row">		
 	<div class="col-lg-8">
 	
 		<form action="" method="post">
 			<table border="1">
 				<thead>
 				  <tr>
-				  	<th>Car Reg. No</th>
-				    <th>Today Charge (RM)</th>
-				    <th>Balance (RM)</th>
-
+				  	<th>Date</th>
+				  	<th>Tran Code</th>
+				  	<th>Description</th>
+				    <th>Db (RM)</th>
+				    <th>Cr (RM)</th>
+				    <th>Bal (RM)</th>
 				  </tr>
 				 </thead>
 				 <tbody data-bind="template: { name: 'customerTemplate', foreach: lineItems }"></tbody>
@@ -27,8 +31,11 @@
 	
 <script type="text/html" id="customerTemplate">
 <tr>
-	<td><a data-bind="text: carRegNo, attr: { href: urlDetail, title: carRegNo }"></a></td>
-	<td><span data-bind="text: chargeAmt"></span></td>
+	<td><span data-bind="text: tranDate"></span></td>
+	<td><span data-bind="text: tranCode"></span></td>
+	<td><span data-bind="text: description"></span></td>
+	<td><span data-bind="text: dbAmt"></span></td>
+	<td><span data-bind="text: crAmt"></span></td>
 	<td><span data-bind="text: balAmt"></span></td>
 </tr>
 </script>
@@ -43,10 +50,12 @@ function viewModel() {
 	
 	self.addLineItem = function(dataRow) {
 		var lineItemDisplay = new LineItemDisplay();
-		lineItemDisplay.carRegNo = ko.observable(dataRow.carRegNo);
-		lineItemDisplay.chargeAmt = ko.observable(dataRow.chargeAmt);
+		lineItemDisplay.tranDate = ko.observable(dataRow.tranDate);
+		lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
+		lineItemDisplay.description = ko.observable(dataRow.description);
+		lineItemDisplay.dbAmt = ko.observable(dataRow.dbAmt);
+		lineItemDisplay.crAmt = ko.observable(dataRow.crAmt);
 		lineItemDisplay.balAmt = ko.observable(dataRow.balAmt);
-		lineItemDisplay.urlDetail = ko.observable("/customer/statement/" + dataRow.carRegNo + "/");
 		
 		self.lineItems.push(lineItemDisplay)
 		}
@@ -58,19 +67,24 @@ ko.applyBindings(vm);
 var LineItemDisplay = function() {
 	var self = this;
 	
-	self.carRegNo;
-	self.chargeAmt;
+	self.tranDate;
+	self.tranCode;
+	self.description;
+	self.dbAmt;
+	self.crAmt;
 	self.balAmt;
-	self.urlDetail;
 };
 
+$("#btnSearch").click(function() {
+	search();
+});
 
 function search() {
 	var postData = {
-			ic: {{ current_customer.ic }}
+			reg_no: "{{ register.car_reg_no }}"
 	};
 	
-	$.post("/customer/home/balance/", postData, function(data, textResult){
+	$.post("/customer/statement/{{ register.car_reg_no }}/", postData, function(data, textResult){
 			jsonData = JSON.parse(data);
 			
 			if(jsonData.returnStatus){

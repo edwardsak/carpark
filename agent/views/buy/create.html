@@ -4,7 +4,7 @@
 <h2>{{ title }}</h2>
 
 <br>
-<div class="col-lg-4, "align="left">	
+<div class="col-lg-15">	
 	<table>
 		<tr>
 			<td>Date:</td>
@@ -63,8 +63,15 @@ $(function() {
 	    dateFormat: 'dd/mm/yy',
 	    altField: '#thealtdate',
 	    altFormat: 'yy-mm-dd'
+		});
 	});
-	});
+
+//function displayMessage(printContent) {
+	//var inf = printContent;
+	//win = window.open("print.htm", 'popup', 'toolbar = no, status = no');
+	//win.document.write(inf);
+	//win.document.close(); // new line
+	//}
 	
 $("#btnSave").click(function(){
 	var postData = {

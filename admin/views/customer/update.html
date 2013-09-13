@@ -62,8 +62,8 @@
 <script type="text/javascript">
 $("#btnSave").click(function(){
 	var postData = {
-			ic: {{ customer.ic}},
-			name: {{ customer.name}},
+			ic: "{{ customer.ic }}",
+			name: "{{ customer.name }}",
 			address: $("#address").val(),
 			tel: $("#tel").val(),
 			hp: $("#hp").val(),

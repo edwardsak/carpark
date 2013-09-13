@@ -51,7 +51,7 @@
             		<li class="dropdown">
                     	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile <b class="caret"></b></a>
                     	<ul class="dropdown-menu">
-                        	<li><a href="/admin/account/update/{{ current_user.code }}/">Update Profile</a></li>
+                        	<li><a href="/admin/account/resetpwd/">Reset Password</a></li>
   							<li><a href="/admin/account/changepwd/">Change Password</a></li>
                     	</ul>
                 	</li>
@@ -88,7 +88,23 @@
                     	</ul>
                 	</li>
                 	
+                	<li class="dropdown">
+                    	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Tool <b class="caret"></b></a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="/admin/closing/">Closing</a></li>
+                    	</ul>
+                	</li>
                 	
+                	<li class="dropdown">
+                    	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="/admin/reports/salebyday/">Sale By Day</a></li>
+                        	<li><a href="/admin/reports/salebymonth/">Sale By Month</a></li>
+                        	<li><a href="/admin/reports/profitbyday/">Profit By Day</a></li>
+                        	<li><a href="/admin/reports/profitbymonth/">Profit By Month</a></li>
+                    	</ul>
+                	</li>
+                		
 	                <li><a href="/admin/about/">About</a></li>
             	</ul>
             	<form class="navbar-form form-inline pull-right">

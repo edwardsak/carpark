@@ -24,12 +24,6 @@
 				<input type="text" id="carPlate" />
 			</td>
 		</tr>
-		<tr>
-			<td>Remark:</td>
-			<td>
-				<textarea name="textarea" rows="10" cols="50" id="remark"></textarea>
-			</td>
-		</tr>
 	</table>
 	<div>
 		<span id="errorMessage" class="error"></span>
@@ -45,7 +39,6 @@ $("#btnSave").click(function(){
 			date: $("#date").text(),
 			lotNo: $("#lotNo").val(),
 			carPlate: $("#carPlate").val(),
-			remark: $("#remark").val(),
 	};
 	
 	$.post("/attendant/charge/create/", postData, function(data, textResult){

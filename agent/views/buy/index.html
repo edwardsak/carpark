@@ -63,7 +63,7 @@
     <td><span data-bind="text: qty"></span></td>
 	<td><span data-bind="text: unitPrice"></span></td>
 	<td><span data-bind="text: subTotal"></span></td>
-	<td><span data-bind="text: commision"></span></td>
+	<td><span data-bind="text: commission"></span></td>
 	<td><span data-bind="text: amount"></span></td>
 	<td><span data-bind="text: paymentDate"></span></td>
 	<td><span data-bind="text: refNo"></span></td>
@@ -89,7 +89,7 @@
 			lineItemDisplay.qty = ko.observable(dataRow.qty);
 			lineItemDisplay.unitPrice = ko.observable(dataRow.unitPrice);
 			lineItemDisplay.subTotal = ko.observable(dataRow.subTotal);
-			lineItemDisplay.commision = ko.observable(dataRow.commision);
+			lineItemDisplay.commission = ko.observable(dataRow.commission);
 			lineItemDisplay.amount = ko.observable(dataRow.amount);
 			lineItemDisplay.paymentDate = ko.observable(dataRow.paymentDate);
 			lineItemDisplay.refNo = ko.observable(dataRow.refNo);
@@ -110,7 +110,7 @@
 		self.qty;
 		self.unitPrice;
 		self.subTotal;
-		self.commision;
+		self.commission;
 		self.amount;
 		self.paymentDate;
 		self.refNo;
@@ -140,7 +140,7 @@
 				}
 			}
 			else{
-				$("#errorMessage").text(jsonData.errorMsg);
+				$("#errorMessage").text(jsonData.returnMessage);
 			}
 		});
 	}
