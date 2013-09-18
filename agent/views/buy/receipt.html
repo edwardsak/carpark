@@ -1,0 +1,100 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+
+<div id="printableArea">
+<center><h2>{{ title }}</h2></center>
+
+<center><h3>Buy Receipt</h3></center>
+<br>
+<div class="row">
+	<div class="col-lg-15" align="center">	
+		<table  border=1 >
+			<tr>
+				<td>Doc No:</td>
+				<td>
+					<span>{{ buys.tran_code }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Date:</td>
+				<td>
+					<span>{{ buys.tran_date }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Agent ID:</td>
+				<td>
+					<span>{{ buys.agent_code }}</span>
+				</td>
+			</tr>
+		  	<tr>
+				<td>Quantity:</td>
+				<td>
+					<span>{{ buys.qty }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Unit Price (RM):</td>
+				<td>
+					<span>{{ buys.unit_price }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Sub Total (RM):</td>
+				<td>
+					<span>{{ buys.sub_total }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Commission (RM):</td>
+				<td>
+					<span>{{ buys.comm_amt }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Amount (RM):</td>
+				<td>
+					<span>{{ buys.amt }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Payment Date:</td>
+				<td>
+					<span>{{ buys.payment_date }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Ref. No:</td>
+				<td>
+					<span>{{ buys.payment_ref_no }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Payment Type:</td>
+				<td>
+					
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<center><input type="button" id="btnPrint" value="Print" onclick="printDiv('printableArea')"/></center>
+	</div>
+</div> <!-- /row -->
+</div> <!-- /printableArea -->
+
+<script type="text/javascript">
+function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    document.getElementById('btnPrint').style.visibility="hidden";
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+}
+</script>
+{% endblock %}

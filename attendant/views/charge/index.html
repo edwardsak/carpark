@@ -54,7 +54,7 @@
 				  	<th>Date</th>
 				    <th>Lot No</th>
 				    <th>Car Plate</th>
-				    <th>Remark</th>
+				    <th>Amount</th>
 				  </tr>
 				 </thead>
 				 <tbody data-bind="template: { name: 'attendantTemplate', foreach: lineItems }"></tbody>
@@ -69,7 +69,7 @@
     <td><span data-bind="text: date"></span></td>
     <td><span data-bind="text: lotNo"></span></td>
 	<td><span data-bind="text: carPlate"></span></td>
-	<td><span data-bind="text: remark"></span></td>
+	<td><span data-bind="text: amount"></span></td>
 </tr>
 </script>
 			
@@ -90,7 +90,7 @@
 			lineItemDisplay.date = ko.observable(dataRow.date);
 			lineItemDisplay.lotNo = ko.observable(dataRow.lotNo);
 			lineItemDisplay.carPlate = ko.observable(dataRow.carPlate);
-			lineItemDisplay.remark = ko.observable(dataRow.remark);
+			lineItemDisplay.amount = ko.observable(dataRow.amount);
 			
 			self.lineItems.push(lineItemDisplay)
 		}
@@ -106,7 +106,7 @@
 		self.date;
 		self.lotNo;
 		self.carPlate;
-		self.remark;
+		self.amount;
 	};
 	
 	$("#btnSearch").click(function() {

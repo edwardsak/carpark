@@ -147,7 +147,7 @@ class Search(BaseHandler):
             current_attendant = self.current_attendant()
             attendant_code = current_attendant.code
             
-            q = Charge.query()
+            q = Charge.query(Charge.attendant_code==attendant_code)
             
             if date_from and len(date_from) > 0:
                 date_from = DateTime.to_date(date_from)
@@ -176,7 +176,7 @@ class Search(BaseHandler):
                              'date': DateTime.to_date_string(charge.tran_date),
                              'lotNo': charge.lot_no,
                              'carPlate': charge.car_reg_no,
-                             'remark': charge.remark,
+                             'amount': charge.sub_total,
                              })
 
             json_values['returnStatus'] = True

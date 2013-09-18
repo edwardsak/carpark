@@ -50,6 +50,15 @@ function viewModel() {
 		
 		self.lineItems.push(lineItemDisplay)
 		}
+	
+	self.addTotalLineItem = function(chargeAmt, balAmt) {
+		var lineItemDisplay = new LineItemDisplay();
+		lineItemDisplay.carRegNo = ko.observable("");
+		lineItemDisplay.chargeAmt = ko.observable(chargeAmt);
+		lineItemDisplay.balAmt = ko.observable(balAmt);
+		
+		self.lineItems.push(lineItemDisplay)
+		};
 }
 var vm = new viewModel();
 
@@ -76,11 +85,17 @@ function search() {
 			if(jsonData.returnStatus){
 				// jason data
 				vm.lineItems.removeAll();
-				
+
+				var chargeAmt = 0;
+				var balAmt = 0;
 				for (var i = 0; i < jsonData.data.length; i++) {
 					var dataRow = jsonData.data[i];
 					vm.addLineItem(dataRow);
+					
+					chargeAmt += dataRow['chargeAmt'];
+					balAmt += dataRow['balAmt'];
 				}
+				vm.addTotalLineItem(chargeAmt, balAmt);
 			}
 			else{
 				$("#errorMessage").text(jsonData.returnMessage);

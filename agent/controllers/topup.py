@@ -58,6 +58,7 @@ class Create(BaseHandler):
             app_service.create(vm)
             
             json_values['returnStatus'] = True
+            json_values['tranCode'] = vm.tran_code
         except Exception, ex:
             json_values['returnStatus'] = False
             json_values['returnMessage'] = str(ex)
@@ -187,3 +188,24 @@ class Search(BaseHandler):
         
         jsonStr = json.dumps(json_values)
         self.response.out.write(jsonStr);
+        
+class Receipt(BaseHandler):
+    def get(self, tran_code):
+        # validate agent is logined or not
+        # if not redirect to login page
+        if self.authenticate() == False:
+            return
+        
+        current_agent = self.current_agent()
+        topups = TopUp.query(TopUp.tran_code==tran_code).get()
+        
+        template_values = {
+                           'title': 'Borneo Ixora Co',
+                           'today': DateTime.to_date_string(DateTime.malaysia_today()),
+                           'current_agent': current_agent,
+                           'topups': topups
+                           }
+        
+        template = JINJA_ENVIRONMENT.get_template('topup/receipt.html')
+        self.response.write(template.render(template_values))
+

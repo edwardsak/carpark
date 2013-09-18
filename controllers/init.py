@@ -1,8 +1,7 @@
 from datalayer.appservice.admin.user import UserAppService
 from datalayer.appservice.admin.systemsetting import SystemSettingAppService
 from datalayer.appservice.admin.closing import ClosingAppService
-from datalayer.viewmodels.viewmodels import UserViewModel
-from sharelib.object import Object
+from datalayer.viewmodels.viewmodels import UserViewModel, SystemSettingViewModel, ClosingViewModel
 from sharelib.utils import DateTime
 
 from datetime import timedelta
@@ -25,15 +24,16 @@ class Init(webapp2.RequestHandler):
         user_as.create(user_vm)
         
     def __create_system_setting(self):
-        vm = Object()
+        vm = SystemSettingViewModel()
         vm.tag_sell_price = 10
+        vm.register_value = 10
         vm.reset_duration = 2
         
         app = SystemSettingAppService()
         app.create(vm)
         
     def __create_closing(self):
-        vm = Object()
+        vm = ClosingViewModel()
         vm.closing_date = DateTime.malaysia_today() - timedelta(days=1)
         
         app = ClosingAppService()

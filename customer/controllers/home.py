@@ -28,10 +28,10 @@ class Index(BaseHandler):
  
         #for car in cars:
             #bals.append({
-                         #'carPlate': car.reg_no,
-                         #'ic': car.customer_ic,
-                         #'bal': car.bal_amt
-                         #})
+            #'carPlate': car.reg_no,
+            #'ic': car.customer_ic,
+            #'bal': car.bal_amt
+            #})
         
         template_values = {
                            'title': 'Balance',
@@ -76,7 +76,7 @@ class Balance(BaseHandler):
                 
                 amt = 0
                 for charge in charges:
-                   amt += charge.sub_total
+                    amt += charge.sub_total
                 
                 data.append({
                              'carRegNo': car.reg_no,

@@ -1,6 +1,6 @@
 from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
-from datalayer.models.models import User
+from datalayer.models.models import User, Buy, Agent
 from datalayer.appservice.admin.reports.profit import Profit
 
 
@@ -13,7 +13,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
                                        extensions=['jinja2.ext.autoescape']
                                        )
 
-class DailyProfit(BaseHandler):
+class BuyByAgent(BaseHandler):
     def get(self):
         # validate agent is logined or not
         # if not redirect to login page
@@ -24,13 +24,13 @@ class DailyProfit(BaseHandler):
         users = User.query().fetch()
         
         template_values = {
-                           'title': 'Daily Profit',
+                           'title': 'Buy List By Agent',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_user': current_user,
                            'users': users
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('reports/profitbyday.html')
+        template = JINJA_ENVIRONMENT.get_template('reports/agentbuy.html')
         self.response.write(template.render(template_values))
         
     def post(self):
@@ -40,27 +40,40 @@ class DailyProfit(BaseHandler):
             #get           
             date_from = self.request.get('dateFrom')
             date_to = self.request.get('dateTo')
+            agent_code = self.request.get('agentCode')
+            
+            q = Buy.query()
             
             if date_from and len(date_from) > 0:
                 date_from = DateTime.to_date(date_from)
+                q = q.filter(Buy.tran_date>=date_from)
                 
             if date_to and len(date_to) > 0:
                 date_to = DateTime.to_date(date_to)
-                
-            if (not date_from and date_to):    
-                raise Exception('You must enter a Date.')
-                
-            profit_by_day = Profit()
-            values = profit_by_day.get_by_day(date_from, date_to)
+                q = q.filter(Buy.tran_date<=date_to)
             
+            if agent_code:
+                q = q.filter(Buy.agent_code==agent_code)
+    
+            if (not date_from and date_to and agent_code):    
+                raise Exception('You must enter a Date or Agent Code.')
+
+            buys = q.fetch()
+            
+            # create json
             data = []
-            for value in values:
+            for buy in buys:
                 data.append({
-                             'tranDate': DateTime.to_date_string(value.tran_date),
-                             'chargeAmt': value.charge_sub_total,
-                             'chargeComm': value.charge_comm_amt,
-                             'topupComm': value.top_up_comm_amt,
-                             'total': value.amt
+                             'agentCode': buy.agent_code,
+                             'date': DateTime.to_date_string(buy.tran_date),
+                             'qty': buy.qty,
+                             'unitPrice': buy.unit_price,
+                             'subTotal': buy.sub_total,
+                             'commission': buy.comm_amt,
+                             'amount': buy.amt,
+                             'paymentDate': DateTime.to_date_string(buy.payment_date),
+                             'refNo': buy.payment_ref_no,
+                             'paymentType': buy.payment_type
                              })
                 
             json_values['returnStatus'] = True

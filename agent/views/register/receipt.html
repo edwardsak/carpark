@@ -1,0 +1,100 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+
+<div id="printableArea">
+<center><h2>{{ title }}</h2></center>
+
+<center><h3>Register Receipt</h3></center>
+<br>
+<div class="row">
+	<div class="col-lg-15" align="center">	
+		<table>
+			<tr>
+				<td>Doc No:</td>
+				<td>
+					<span>{{ registers.tran_code }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Date:</td>
+				<td>
+					<span>{{ registers.tran_date }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Agent ID:</td>
+				<td>
+					<span>{{ registers.agent_code }}</span>
+				</td>
+			</tr>
+		  	<tr>
+				<td>Car Reg. No:</td>
+				<td>
+					<span>{{ registers.car_reg_no }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Name:</td>
+				<td>
+					<span>{{ registers.customer_name }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>IC/PP No:</td>
+				<td>
+					<span>{{ registers.customer_ic }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Address:</td>
+				<td>
+					<span>{{ registers.customer_address }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Tel:</td>
+				<td>
+					<span>{{ registers.customer_tel }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Hp:</td>
+				<td>
+					<span>{{ registers.customer_hp }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Email:</td>
+				<td>
+					<span>{{ registers.customer_email }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Tag No:</td>
+				<td>
+					<span>{{ registers.tag_code }}</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<center><input type="button" id="btnPrint" value="Print" onclick="printDiv('printableArea')"/></center>
+	</div>
+</div> <!-- /row -->
+</div> <!-- /printableArea -->
+
+<script type="text/javascript">
+function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    document.getElementById('btnPrint').style.visibility="hidden";
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+}
+</script>
+{% endblock %}

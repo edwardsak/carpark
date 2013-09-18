@@ -1,6 +1,7 @@
 from controllers import home, init
 from admin.controllers import home as admin_home, account as admin_account, user as admin_user, agent as admin_agent, attendant as admin_attendant, customer as admin_customer, closing as admin_closing
-from admin.controllers.reports import dailyprofit, monthlyprofit
+from admin.controllers.reports import dailyprofit, monthlyprofit, dailycharge, monthlycharge, dailychargebyattendant, monthlychargebyattendant, dailytopup, monthlytopup 
+from admin.controllers.reports import agentbuy, agentdeposit, agentregister, agenttopup
 from agent.controllers import home as agent_home, account as agent_account, buy as agent_buy, deposit as agent_deposit, register as agent_register, topup as agent_topup, statement as agent_statement
 from attendant.controllers import home as attendant_home, account as attendant_account, charge as attendant_charge
 from customer.controllers import home as customer_home, account as customer_account, statement as customer_statement
@@ -54,6 +55,16 @@ app = webapp2.WSGIApplication([
                             
                             ('/admin/reports/profitbyday/', dailyprofit.DailyProfit),
                             ('/admin/reports/profitbymonth/', monthlyprofit.MonthlyProfit),
+                            ('/admin/reports/chargebyday/', dailycharge.DailyCharge),
+                            ('/admin/reports/chargebymonth/', monthlycharge.MonthlyCharge),
+                            ('/admin/reports/chargebydayandattendant/', dailychargebyattendant.DailyAttendantCharge),
+                            ('/admin/reports/chargebymonthandattendant/', monthlychargebyattendant.MonthlyAttendantCharge),
+                            ('/admin/reports/topupbyday/', dailytopup.DailyTopUp),
+                            ('/admin/reports/topupbymonth/', monthlytopup.MonthlyTopUp),
+                            ('/admin/reports/buybyagent/', agentbuy.BuyByAgent),
+                            ('/admin/reports/depositbyagent/', agentdeposit.DepositByAgent),
+                            ('/admin/reports/registerbyagent/', agentregister.RegisterByAgent),
+                            ('/admin/reports/topupbyagent/', agenttopup.TopUpByAgent),
                             
                             ('/agent/', agent_home.Index),
                             ('/agent/about/', agent_home.About),
@@ -65,15 +76,19 @@ app = webapp2.WSGIApplication([
                             ('/agent/buy/', agent_buy.Index),
                             ('/agent/buy/create/', agent_buy.Create),
                             ('/agent/buy/search/', agent_buy.Search),
+                            ('/agent/buy/receipt/([^/]+)/', agent_buy.Receipt),
                             ('/agent/deposit/', agent_deposit.Index),
                             ('/agent/deposit/create/', agent_deposit.Create),
                             ('/agent/deposit/search/', agent_deposit.Search),
+                            ('/agent/deposit/receipt/([^/]+)/', agent_deposit.Receipt),
                             ('/agent/register/', agent_register.Index),
                             ('/agent/register/create/', agent_register.Create),
                             ('/agent/register/search/', agent_register.Search),
+                            ('/agent/register/receipt/([^/]+)/', agent_register.Receipt),
                             ('/agent/topup/', agent_topup.Index),
                             ('/agent/topup/create/', agent_topup.Create),
                             ('/agent/topup/search/', agent_topup.Search),
+                            ('/agent/topup/receipt/([^/]+)/', agent_topup.Receipt),
                             ('/agent/statement/', agent_statement.Statement),
                             
                             

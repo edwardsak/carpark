@@ -20,15 +20,18 @@
 				<input type="text" id="dateTo" />
 			</td>
 		</tr>
+		<tr>
+			<td>Agent Code:</td>
+			<td>
+				<input type="text" id="agentCode" />
+			</td>
+		</tr>
 		</table>
 		<div>
 	   		<span id="errorMessage" class="error"></span>
 	   	</div>
 		<div style="display: inline;">
 			<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
-		</div>
-		<div style="display: inline;">
-			<input type="button" id="btnBuy" value="Buy" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
 		</form>
 	</div>
@@ -38,7 +41,6 @@
 			<table border="1" id="buylist">
 				<thead>
 				  <tr>
-				  	<th>No</th>
 				  	<th>Agent ID</th>
 				  	<th>Date</th>
 				    <th>Quantity</th>
@@ -59,7 +61,6 @@
 
 <script type="text/html" id="agentTemplate">
 <tr>
-	<td><span data-bind="text: no"></span></td>
 	<td><span data-bind="text: agentCode"></span></td>
     <td><span data-bind="text: date"></span></td>
     <td><span data-bind="text: qty"></span></td>
@@ -74,10 +75,6 @@
 </script>
 			
 <script type="text/javascript">
-	$("#btnBuy").click(function(){
-		window.location = "/agent/buy/create/";
-	});
-	
 	// search
 	function viewModel() {
 		var self = this;
@@ -86,7 +83,6 @@
 		
 		self.addLineItem = function(dataRow) {
 			var lineItemDisplay = new LineItemDisplay();
-			lineItemDisplay.no = ko.observable(dataRow.no);
 			lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
 			lineItemDisplay.date = ko.observable(dataRow.date);
 			lineItemDisplay.qty = ko.observable(dataRow.qty);
@@ -103,11 +99,10 @@
 		
 		self.addTotalLineItem = function(qty, subTotal, commission, amount) {
 			var lineItemDisplay = new LineItemDisplay();
-			lineItemDisplay.no = ko.observable("Total");
 			lineItemDisplay.agentCode = ko.observable("");
 			lineItemDisplay.date = ko.observable("");
 			lineItemDisplay.qty = ko.observable(qty);
-			lineItemDisplay.unitPrice = ko.observable("");
+			lineItemDisplay.unitPrice = ko.observable(0);
 			lineItemDisplay.subTotal = ko.observable(subTotal);
 			lineItemDisplay.commission = ko.observable(commission);
 			lineItemDisplay.amount = ko.observable(amount);
@@ -125,7 +120,6 @@
 	var LineItemDisplay = function() {
 		var self = this;
 		
-		self.no;
 		self.agentCode;
 		self.date;
 		self.qty;
@@ -146,9 +140,10 @@
 		var postData = {
 				dateFrom: $("#dateFrom").val(),
 				dateTo: $("#dateTo").val(),
+				agentCode: $("#agentCode").val(),
 				};
 		
-		$.post("/agent/buy/search/", postData, function(data, textResult){
+		$.post("/admin/reports/buybyagent/", postData, function(data, textResult){
 			jsonData = JSON.parse(data);
 				
 			if(jsonData.returnStatus){
@@ -157,16 +152,15 @@
 				
 				var qty = 0;
 				var subTotal = 0;
-				var commission = 0;
+				var comm = 0;
 				var sumAmount = 0;
 				for (var i = 0; i < jsonData.data.length; i++) {
 					var dataRow = jsonData.data[i];
-					dataRow["no"] = i+1;
 					vm.addLineItem(dataRow);
 					
 					qty += dataRow['qty'];
 					subTotal += dataRow['subTotal'];
-					commission += dataRow['commission'];
+					comm += dataRow['commission'];
 					sumAmount += dataRow['amount'];
 				}
 				vm.addTotalLineItem(qty, subTotal, commission, sumAmount);

@@ -1,6 +1,7 @@
 {% extends "base/base.html" %}
 
 {% block main %}
+
 <h2>{{ title }}</h2>
 
 <br>
@@ -57,6 +58,7 @@
 	</div>
 </div> <!-- /class -->
 
+
 <script type="text/javascript">
 $(function() {
 	$( "#paymentDate" ).datepicker({
@@ -66,12 +68,14 @@ $(function() {
 		});
 	});
 
-//function displayMessage(printContent) {
-	//var inf = printContent;
-	//win = window.open("print.htm", 'popup', 'toolbar = no, status = no');
-	//win.document.write(inf);
-	//win.document.close(); // new line
-	//}
+//--------------------
+function displayMessage(printContent) {
+	var inf = printContent;
+	win = window.open("print.htm", 'popup', 'toolbar = no, status = no');
+	win.document.write(inf);
+	win.document.close(); // new line
+	}
+
 	
 $("#btnSave").click(function(){
 	var postData = {
@@ -80,21 +84,19 @@ $("#btnSave").click(function(){
 			unitPrice: $("#unitPrice").val(),
 			amount: $("#amount").val(),
 			refNo: $("#refNo").val(),
-			paymentDate: $("#paymentDate").val(),
-			
+			paymentDate: $("#paymentDate").val(),		
 	};
 	
 	$.post("/agent/buy/create/", postData, function(data, textResult){
 		jsonData = JSON.parse(data);
 			
 		if(jsonData.returnStatus){
-			window.location = "/agent/buy/";
+			window.location = "/agent/buy/receipt/" + jsonData.tranCode + "/";
 		}
 		else{
 			$("#errorMessage").text(jsonData.returnMessage);
 		}
 	});
-
 });
 </script>
 {% endblock %}

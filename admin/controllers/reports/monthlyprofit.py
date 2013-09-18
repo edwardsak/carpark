@@ -1,7 +1,7 @@
 from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
 from datalayer.models.models import User
-from datalayer.appservice.admin.reports.profit import ProfitByMonth
+from datalayer.appservice.admin.reports.profit import Profit
 
 
 
@@ -42,8 +42,8 @@ class MonthlyProfit(BaseHandler):
             date_from = DateTime.to_date(self.request.get('dateFrom'))
             date_to = DateTime.to_date(self.request.get('dateTo'))
             
-            profit_by_month = ProfitByMonth()
-            values = profit_by_month.get(date_from, date_to)
+            profit_by_month = Profit()
+            values = profit_by_month.get_by_day(date_from, date_to)
             
             data = []
             for value in values:

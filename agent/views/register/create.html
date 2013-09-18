@@ -91,7 +91,7 @@ $("#btnSave").click(function(){
 		jsonData = JSON.parse(data);
 			
 		if(jsonData.returnStatus){
-			window.location = "/agent/register/";
+			window.location = "/agent/register/receipt/" + jsonData.tranCode + "/";
 		}
 		else{
 			$("#errorMessage").text(jsonData.returnMessage);

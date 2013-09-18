@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+
+<div id="printableArea">
+<center><h2>{{ title }}</h2></center>
+
+<center><h3>Deposit Receipt</h3></center>
+<br>
+<div class="row">
+	<div class="col-lg-15" align="center">	
+		<table>
+			<tr>
+				<td>Doc No:</td>
+				<td>
+					<span>{{ deposits.tran_code }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Date:</td>
+				<td>
+					<span>{{ deposits.tran_date }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Agent ID:</td>
+				<td>
+					<span>{{ deposits.agent_code }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Amount (RM):</td>
+				<td>
+					<span>{{ deposits.amt }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Payment Date:</td>
+				<td>
+					<span>{{ deposits.payment_date }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Ref. No:</td>
+				<td>
+					<span>{{ deposits.payment_ref_no }}</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Payment Type:</td>
+				<td>
+					
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<center><input type="button" id="btnPrint" value="Print" onclick="printDiv('printableArea')"/></center>
+	</div>
+</div> <!-- /row -->
+</div> <!-- /printableArea -->
+
+<script type="text/javascript">
+function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    document.getElementById('btnPrint').style.visibility="hidden";
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+}
+</script>
+{% endblock %}

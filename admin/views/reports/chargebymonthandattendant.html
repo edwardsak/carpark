@@ -1,0 +1,144 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+		<form action="" method="post">
+		<table>
+		<tr>
+			<td>Date From:</td>
+			<td>
+				<input type="text" id="dateFrom" />
+			</td>
+		</tr>
+		<tr>
+			<td>Date To:</td>
+			<td>
+				<input type="text" id="dateTo" />
+			</td>
+		</tr>
+		<tr>
+			<td>Attendant ID:</td>
+			<td>
+				<input type="text" id="attendantCode" />
+			</td>
+		</tr>
+		</table>
+		<div>
+	   		<span id="errorMessage" class="error"></span>
+	   	</div>
+		<div style="display: inline;">
+			<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
+		</form>
+	</div>
+	
+	<div class="col-lg-8">
+		<form action="" method="post">
+			<table border="1">
+				<thead>
+				  <tr>
+				  	<th>Date</th>
+				    <th>Attendant Code</th>
+				    <th>Sub Total (RM)</th>
+				    <th>Charge Comm (RM)</th>
+				    <th>Total (RM)</th>
+				  </tr>
+				 </thead>
+				 <tbody data-bind="template: { name: 'adminTemplate', foreach: lineItems }"></tbody>
+			</table>	
+		</form>
+	</div>
+</div> <!-- /row -->
+
+<script type="text/html" id="adminTemplate">
+<tr>
+	<td><span data-bind="text: tranDate"></span></td>
+	<td><span data-bind="text: attendantCode"></span></td>
+	<td><span data-bind="text: chargeComm"></span></td>
+	<td><span data-bind="text: topupComm"></span></td>
+	<td><span data-bind="text: total"></span></td>
+</tr>
+</script>
+			
+<script type="text/javascript">
+// search
+function viewModel() {
+	var self = this;
+	
+	self.lineItems = ko.observableArray();
+	
+	self.addLineItem = function(dataRow) {
+		var lineItemDisplay = new LineItemDisplay();
+		lineItemDisplay.tranDate = ko.observable(dataRow.tranDate);
+		lineItemDisplay.attendantCode = ko.observable(dataRow.attendantCode);
+		lineItemDisplay.chargeComm = ko.observable(dataRow.chargeComm);
+		lineItemDisplay.topupComm = ko.observable(dataRow.topupComm);
+		lineItemDisplay.total = ko.observable(dataRow.total);
+		
+		self.lineItems.push(lineItemDisplay)
+	};
+}
+var vm = new viewModel();
+
+ko.applyBindings(vm);
+
+var LineItemDisplay = function() {
+	var self = this;
+	
+	self.tranDate;
+	self.attendantCode;
+	self.chargeComm;
+	self.topupComm;
+	self.total;
+};
+
+$("#btnSearch").click(function() {
+	search();
+});
+
+function search() {
+	var postData = {
+			dateFrom: $("#dateFrom").val(),
+			dateTo: $("#dateTo").val(),
+			attendantCode: $("#attendantCode").val(),
+			};
+	
+	$.post("/admin/reports/chargebymonthandattendant/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			// jason data
+			vm.lineItems.removeAll();
+			
+			for (var i = 0; i < jsonData.data.length; i++) {
+				var dataRow = jsonData.data[i];
+				vm.addLineItem(dataRow);
+			}
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+}
+
+$(function() {
+  	$( "#dateFrom" ).datepicker({
+  	    dateFormat: 'dd/mm/yy',
+  	    altField: '#thealtdate',
+  	    altFormat: 'yy-mm-dd'
+  	});
+});
+
+$(function() {
+  	$( "#dateTo" ).datepicker({
+  	    dateFormat: 'dd/mm/yy',
+  	    altField: '#thealtdate',
+  	    altFormat: 'yy-mm-dd'
+  	});
+});
+</script>
+{% endblock %}

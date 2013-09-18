@@ -13,7 +13,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
                                        extensions=['jinja2.ext.autoescape']
                                        )
 
-class DailyProfit(BaseHandler):
+class RegisterByAgent(BaseHandler):
     def get(self):
         # validate agent is logined or not
         # if not redirect to login page
@@ -24,7 +24,7 @@ class DailyProfit(BaseHandler):
         users = User.query().fetch()
         
         template_values = {
-                           'title': 'Daily Profit',
+                           'title': 'Register List By Agent',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_user': current_user,
                            'users': users

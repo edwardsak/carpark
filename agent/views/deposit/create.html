@@ -71,7 +71,7 @@ $("#btnSave").click(function(){
 		jsonData = JSON.parse(data);
 			
 		if(jsonData.returnStatus){
-			window.location = "/agent/deposit/";
+			window.location = "/agent/deposit/receipt/" + jsonData.tranCode + "/";
 		}
 		else{
 			$("#errorMessage").text(jsonData.returnMessage);

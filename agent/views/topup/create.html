@@ -49,7 +49,7 @@ $("#btnSave").click(function(){
 		jsonData = JSON.parse(data);
 			
 		if(jsonData.returnStatus){
-			window.location = "/agent/topup/";
+			window.location = "/agent/topup/receipt/" + jsonData.tranCode + "/";
 		}
 		else{
 			$("#errorMessage").text(jsonData.returnMessage);

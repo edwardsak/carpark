@@ -38,9 +38,9 @@
 			<table border="1">
 				<thead>
 				  <tr>
+				  	<th>No</th>
 				  	<th>Agent ID</th>
 				  	<th>Date</th>
-				  	<th>Doc No</th>
 				    <th>Amount</th>
 				    <th>Payment Date</th>
 				    <th>Ref. No</th>
@@ -55,6 +55,7 @@
 
 <script type="text/html" id="agentTemplate">
 <tr>
+	<td><span data-bind="text: no"></span></td>
 	<td><span data-bind="text: agentCode"></span></td>
     <td><span data-bind="text: date"></span></td>
 	<td><span data-bind="text: amount"></span></td>
@@ -77,6 +78,7 @@ function viewModel() {
 	
 	self.addLineItem = function(dataRow) {
 		var lineItemDisplay = new LineItemDisplay();
+		lineItemDisplay.no = ko.observable(dataRow.no);
 		lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
 		lineItemDisplay.date = ko.observable(dataRow.date);
 		lineItemDisplay.amount = ko.observable(dataRow.amount);
@@ -85,7 +87,20 @@ function viewModel() {
 		lineItemDisplay.paymentType = ko.observable(dataRow.paymentType);
 		
 		self.lineItems.push(lineItemDisplay)
-		}
+		};
+		
+	self.addTotalLineItem = function(amount) {
+		var lineItemDisplay = new LineItemDisplay();
+		lineItemDisplay.no = ko.observable("Total");
+		lineItemDisplay.agentCode = ko.observable("");
+		lineItemDisplay.date = ko.observable("");
+		lineItemDisplay.amount = ko.observable(amount);
+		lineItemDisplay.paymentDate = ko.observable("");
+		lineItemDisplay.refNo = ko.observable("");
+		lineItemDisplay.paymentType = ko.observable("");
+		
+		self.lineItems.push(lineItemDisplay)
+		};
 	}
 	var vm = new viewModel();
 	
@@ -94,6 +109,7 @@ function viewModel() {
 	var LineItemDisplay = function() {
 		var self = this;
 		
+		self.no;
 		self.agentCode;
 		self.date;
 		self.amount;
@@ -119,10 +135,14 @@ function search() {
 				// jason data
 				vm.lineItems.removeAll();
 				
+				var amount = 0;
 				for (var i = 0; i < jsonData.data.length; i++) {
 					var dataRow = jsonData.data[i];
+					dataRow["no"] = i+1;
 					vm.addLineItem(dataRow);
+					amount += dataRow['amount'];
 				}
+				vm.addTotalLineItem(amount);
 			}
 			else{
 				$("#errorMessage").text(jsonData.returnMessage);	
