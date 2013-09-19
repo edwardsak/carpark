@@ -1,7 +1,6 @@
 from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
 from datalayer.models.models import User, Buy, Agent
-from datalayer.appservice.admin.reports.profit import Profit
 
 
 import os
@@ -30,7 +29,7 @@ class BuyByAgent(BaseHandler):
                            'users': users
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('reports/agentbuy.html')
+        template = JINJA_ENVIRONMENT.get_template('buy/index.html')
         self.response.write(template.render(template_values))
         
     def post(self):
@@ -65,6 +64,56 @@ class BuyByAgent(BaseHandler):
             for buy in buys:
                 data.append({
                              'agentCode': buy.agent_code,
+                             'tranDate': DateTime.to_date_string(buy.tran_date),
+                             'quantity': buy.qty,
+                             'amt': buy.sub_total,
+                             })
+                
+            json_values['returnStatus'] = True
+            json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
+            
+        json_str = json.dumps(json_values)
+        self.response.out.write(json_str)
+
+class BuyDetail(BaseHandler):       
+    def get(self, agent_code):
+        # validate admin is logined or not
+        # if not redirect to login page
+        if self.authenticate() == False:
+            return
+        
+        current_user = self.current_user()
+        
+        buy = Buy.query(Buy.agent_code==agent_code).get()
+        agent = Agent.query(Agent.code==agent_code).get()
+        
+        template_values = {
+                           'title': 'Detail Buy List',
+                           'today': DateTime.to_date_string(DateTime.malaysia_today()),
+                           'current_user': current_user,
+                           'buy': buy,
+                           'agent': agent
+                           }
+        
+        template = JINJA_ENVIRONMENT.get_template('buy/detail.html')
+        self.response.write(template.render(template_values))
+        
+    def post(self, agent_code):
+        json_values = {}
+        
+        try:
+            #get           
+            agent_code = self.request.get('agentCode')
+            
+            buys = Buy.query(Buy.agent_code==agent_code).fetch()
+            
+            # create json
+            data = []
+            for buy in buys:
+                data.append({
                              'date': DateTime.to_date_string(buy.tran_date),
                              'qty': buy.qty,
                              'unitPrice': buy.unit_price,
@@ -73,7 +122,8 @@ class BuyByAgent(BaseHandler):
                              'amount': buy.amt,
                              'paymentDate': DateTime.to_date_string(buy.payment_date),
                              'refNo': buy.payment_ref_no,
-                             'paymentType': buy.payment_type
+                             'paymentType': buy.payment_type,
+                             'tranCode': buy.tran_code,
                              })
                 
             json_values['returnStatus'] = True

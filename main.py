@@ -1,7 +1,7 @@
 from controllers import home, init
 from admin.controllers import home as admin_home, account as admin_account, user as admin_user, agent as admin_agent, attendant as admin_attendant, customer as admin_customer, closing as admin_closing
 from admin.controllers.reports import dailyprofit, monthlyprofit, dailycharge, monthlycharge, dailychargebyattendant, monthlychargebyattendant, dailytopup, monthlytopup 
-from admin.controllers.reports import agentbuy, agentdeposit, agentregister, agenttopup
+from admin.controllers.summaryreports import agentbuy, agentdeposit, agentregister, agenttopup
 from agent.controllers import home as agent_home, account as agent_account, buy as agent_buy, deposit as agent_deposit, register as agent_register, topup as agent_topup, statement as agent_statement
 from attendant.controllers import home as attendant_home, account as attendant_account, charge as attendant_charge
 from customer.controllers import home as customer_home, account as customer_account, statement as customer_statement
@@ -61,10 +61,16 @@ app = webapp2.WSGIApplication([
                             ('/admin/reports/chargebymonthandattendant/', monthlychargebyattendant.MonthlyAttendantCharge),
                             ('/admin/reports/topupbyday/', dailytopup.DailyTopUp),
                             ('/admin/reports/topupbymonth/', monthlytopup.MonthlyTopUp),
-                            ('/admin/reports/buybyagent/', agentbuy.BuyByAgent),
-                            ('/admin/reports/depositbyagent/', agentdeposit.DepositByAgent),
-                            ('/admin/reports/registerbyagent/', agentregister.RegisterByAgent),
-                            ('/admin/reports/topupbyagent/', agenttopup.TopUpByAgent),
+                            
+                            ('/admin/summaryreports/buybyagent/', agentbuy.BuyByAgent),
+                            ('/admin/buy/detail/([^/]+)/', agentbuy.BuyDetail),
+                            ('/admin/summaryreports/depositbyagent/', agentdeposit.DepositByAgent),
+                            ('/admin/deposit/detail/([^/]+)/', agentdeposit.DepositDetail),
+                            ('/admin/summaryreports/registerbyagent/', agentregister.RegisterByAgent),
+                            ('/admin/register/detail/([^/]+)/', agentregister.RegisterDetail),
+                            ('/admin/register/car/detail/([^/]+)/', agentregister.RegisterCarDetail),
+                            ('/admin/summaryreports/topupbyagent/', agenttopup.TopUpByAgent),
+                            ('/admin/topup/detail/([^/]+)/', agenttopup.TopUpDetail),
                             
                             ('/agent/', agent_home.Index),
                             ('/agent/about/', agent_home.About),

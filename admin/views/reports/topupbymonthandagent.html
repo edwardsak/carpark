@@ -20,6 +20,12 @@
 				<input type="text" id="dateTo" />
 			</td>
 		</tr>
+		<tr>
+			<td>Agent ID:</td>
+			<td>
+				<input type="text" id="agentCode" />
+			</td>
+		</tr>
 		</table>
 		<div>
 	   		<span id="errorMessage" class="error"></span>
@@ -98,6 +104,7 @@ function search() {
 	var postData = {
 			dateFrom: $("#dateFrom").val(),
 			dateTo: $("#dateTo").val(),
+			agentCode: $("#agentCode").val(),
 			};
 	
 	$.post("/admin/reports/topupbymonth/", postData, function(data, textResult){

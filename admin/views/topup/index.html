@@ -35,36 +35,37 @@
 		</div>
 		</form>
 	</div>
-	
+		
 	<div class="col-lg-8">
+	
 		<form action="" method="post">
 			<table border="1">
 				<thead>
 				  <tr>
+				  	<th>Agent ID</th>
 				  	<th>Date</th>
-				    <th>Agent ID</th>
-				    <th>Sub Total (RM)</th>
-				    <th>TopUp Comm (RM)</th>
-				    <th>Total (RM)</th>
+				    <th>Amt (RM)</th>
 				  </tr>
 				 </thead>
-				 <tbody data-bind="template: { name: 'adminTemplate', foreach: lineItems }"></tbody>
-			</table>	
+				 <tbody data-bind="template: { name: 'topupTemplate', foreach: lineItems }"></tbody>
+			</table>
+			<div>
+	   		<span id="errorMessage" class="error"></span>
+	   		</div>	
 		</form>
 	</div>
 </div> <!-- /row -->
-
-<script type="text/html" id="adminTemplate">
+	
+<script type="text/html" id="topupTemplate">
 <tr>
+	<td><a data-bind="text: agentCode, attr: { href: urlDetail, title: agentCode }"></a></td>
 	<td><span data-bind="text: tranDate"></span></td>
-	<td><span data-bind="text: agentCode"></span></td>
-	<td><span data-bind="text: topupAmt"></span></td>
-	<td><span data-bind="text: topupComm"></span></td>
-	<td><span data-bind="text: total"></span></td>
+	<td><span data-bind="text: subTotal"></span></td>
 </tr>
 </script>
 			
 <script type="text/javascript">
+
 // search
 function viewModel() {
 	var self = this;
@@ -73,14 +74,13 @@ function viewModel() {
 	
 	self.addLineItem = function(dataRow) {
 		var lineItemDisplay = new LineItemDisplay();
-		lineItemDisplay.tranDate = ko.observable(dataRow.tranDate);
 		lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
-		lineItemDisplay.topupAmt = ko.observable(dataRow.topupAmt);
-		lineItemDisplay.topupComm = ko.observable(dataRow.topupComm);
-		lineItemDisplay.total = ko.observable(dataRow.total);
+		lineItemDisplay.tranDate = ko.observable(dataRow.tranDate);
+		lineItemDisplay.subTotal = ko.observable(dataRow.subTotal);
+		lineItemDisplay.urlDetail = ko.observable("/admin/topup/detail/" + dataRow.agentCode + "/");
 		
 		self.lineItems.push(lineItemDisplay)
-	};
+		}
 }
 var vm = new viewModel();
 
@@ -89,11 +89,10 @@ ko.applyBindings(vm);
 var LineItemDisplay = function() {
 	var self = this;
 	
-	self.tranDate;
 	self.agentCode;
-	self.topupAmt;
-	self.topupComm;
-	self.total;
+	self.tranDate;
+	self.subTotal;
+	self.urlDetail;
 };
 
 $("#btnSearch").click(function() {
@@ -107,38 +106,39 @@ function search() {
 			agentCode: $("#agentCode").val(),
 			};
 	
-	$.post("/admin/reports/topupbydayandagent/", postData, function(data, textResult){
-		jsonData = JSON.parse(data);
+	$.post("/admin/summaryreports/topupbyagent/", postData, function(data, textResult){
+			jsonData = JSON.parse(data);
 			
-		if(jsonData.returnStatus){
-			// jason data
-			vm.lineItems.removeAll();
-			
-			for (var i = 0; i < jsonData.data.length; i++) {
-				var dataRow = jsonData.data[i];
-				vm.addLineItem(dataRow);
+			if(jsonData.returnStatus){
+				// jason data
+				vm.lineItems.removeAll();
+				
+				for (var i = 0; i < jsonData.data.length; i++) {
+					var dataRow = jsonData.data[i];
+					vm.addLineItem(dataRow);
+				}
 			}
-		}
-		else{
-			$("#errorMessage").text(jsonData.returnMessage);
-		}
+			else{
+				$("#errorMessage").text(jsonData.returnMessage);
+			}
 	});
 }
 
 $(function() {
-  	$( "#dateFrom" ).datepicker({
-  	    dateFormat: 'dd/mm/yy',
-  	    altField: '#thealtdate',
-  	    altFormat: 'yy-mm-dd'
-  	});
-});
-
-$(function() {
-  	$( "#dateTo" ).datepicker({
-  	    dateFormat: 'dd/mm/yy',
-  	    altField: '#thealtdate',
-  	    altFormat: 'yy-mm-dd'
-  	});
+	$( "#dateFrom" ).datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    altField: '#thealtdate',
+	    altFormat: 'yy-mm-dd'
+	});
+	});
+	
+	$(function() {
+	$( "#dateTo" ).datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    altField: '#thealtdate',
+	    altFormat: 'yy-mm-dd'
+	});
 });
 </script>
+
 {% endblock %}

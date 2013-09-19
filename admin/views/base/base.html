@@ -112,15 +112,18 @@
                         	<li><a disabled>-------------------------------------</a></li>
                         	<li><a href="/admin/reports/topupbyday/">Daily Top Up By Agent</a></li>
                         	<li><a href="/admin/reports/topupbymonth/">Monthly Top Up By Agent</a></li>
-                        	<li><a disabled>-------------------------------------</a></li>
-                        	<li><a href="/admin/reports/buybyagent/">Buy List</a></li>
-                        	<li><a href="/admin/reports/depositbyagent/">Deposit List</a></li>
-                        	<li><a href="/admin/reports/registerbyagent/">Register List</a></li>
-                        	<li><a href="/admin/reports/topupbyagent/">Top Up List</a></li>
                     	</ul>
                 	</li>
-                		
-	                <li><a href="/admin/about/">About</a></li>
+                	
+                	<li class="dropdown">
+                    	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Summary Reports <b class="caret"></b></a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="/admin/summaryreports/buybyagent/">Buy List</a></li>
+                        	<li><a href="/admin/summaryreports/depositbyagent/">Deposit List</a></li>
+                        	<li><a href="/admin/summaryreports/registerbyagent/">Register List</a></li>
+                        	<li><a href="/admin/summaryreports/topupbyagent/">Top Up List</a></li>
+                    	</ul>
+                	</li>
             	</ul>
             	<form class="navbar-form form-inline pull-right">
             		{% if current_user %}

@@ -73,7 +73,7 @@
 			<tr>
 				<td>Payment Type:</td>
 				<td>
-					
+					<span id="submittername"></span>
 				</td>
 			</tr>
 		</table>
@@ -85,6 +85,15 @@
 </div> <!-- /printableArea -->
 
 <script type="text/javascript">
+var type = "{{ buys.payment_type }}";
+if (type = 1){
+	$("#submittername").text("cash");
+}
+else{
+	$("#submittername").text("Cheque");
+}
+
+
 function printDiv(divName) {
     var printContents = document.getElementById(divName).innerHTML;
     var originalContents = document.body.innerHTML;

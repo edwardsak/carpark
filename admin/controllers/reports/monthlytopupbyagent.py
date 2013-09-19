@@ -1,7 +1,8 @@
 from admin.controllers.base import BaseHandler
 from sharelib.utils import DateTime
 from datalayer.models.models import User
-from datalayer.appservice.admin.reports.profit import Profit
+from datalayer.appservice.admin.reports.topupsummary import TopUpSummaryByMonthAndAgent
+
 
 
 import os
@@ -13,7 +14,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
                                        extensions=['jinja2.ext.autoescape']
                                        )
 
-class DepositByAgent(BaseHandler):
+class MonthlyAgentTopUp(BaseHandler):
     def get(self):
         # validate agent is logined or not
         # if not redirect to login page
@@ -24,42 +25,35 @@ class DepositByAgent(BaseHandler):
         users = User.query().fetch()
         
         template_values = {
-                           'title': 'Deposit List By Agent',
+                           'title': 'Monthly Top Up',
                            'today': DateTime.to_date_string(DateTime.malaysia_today()),
                            'current_user': current_user,
                            'users': users
                            }
         
-        template = JINJA_ENVIRONMENT.get_template('reports/profitbyday.html')
+        template = JINJA_ENVIRONMENT.get_template('reports/topupbymonth.html')
         self.response.write(template.render(template_values))
         
     def post(self):
         json_values = {}
         
         try:
-            #get           
-            date_from = self.request.get('dateFrom')
-            date_to = self.request.get('dateTo')
+            #get
+            date_from = DateTime.to_date(self.request.get('dateFrom'))
+            date_to = DateTime.to_date(self.request.get('dateTo'))
+            agent_code = self.request.get('agentCode')
             
-            if date_from and len(date_from) > 0:
-                date_from = DateTime.to_date(date_from)
-                
-            if date_to and len(date_to) > 0:
-                date_to = DateTime.to_date(date_to)
-                
-            if (not date_from and date_to):    
-                raise Exception('You must enter a Date.')
-                
-            profit_by_day = Profit()
-            values = profit_by_day.get_by_day(date_from, date_to)
+            topup_by_month = TopUpSummaryByMonthAndAgent()
+            values = topup_by_month.get(date_from, date_to, agent_code)
+            topup_by_month.get()
             
             data = []
             for value in values:
                 data.append({
                              'tranDate': DateTime.to_date_string(value.tran_date),
-                             'chargeAmt': value.charge_sub_total,
-                             'chargeComm': value.charge_comm_amt,
-                             'topupComm': value.top_up_comm_amt,
+                             'agentCode': value.agent_code,
+                             'topupAmt': value.sub_total,
+                             'topupComm': value.comm_amt,
                              'total': value.amt
                              })
                 

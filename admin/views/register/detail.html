@@ -1,0 +1,129 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+<br>
+<div id="container" style="height: 34px; width: 40%; border: 1px solid #333">
+	<span style="font-size: 22px; float: left; vertical-align: top;"> Agent ID: {{ register.agent_code }}</span>
+	<span style="font-size: 22px; float: right; vertical-align: top;"> Agent Name: {{ agent.name }}</span>
+</div>
+<br>
+<div class="col-lg-8">
+	<form action="" method="post">
+		<table border="1" id="buylist">
+			<thead>
+			  <tr>
+			  	<th>No</th>
+			  	<th>Car Reg. No</th>
+			  	<th>Date</th>
+			    <th>IC/PP No</th>
+			    <th>Name</th>
+			    <th>Address</th>
+			    <th>Tel</th>
+			    <th>Hp</th>
+			    <th>Email</th>
+			    <th>Tag No</th>
+			    <th>Tran Code</th>
+			  </tr>
+			 </thead>
+			 <tbody data-bind="template: { name: 'registerTemplate', foreach: lineItems }"></tbody>
+		</table>	
+	</form>
+</div>
+</div> <!-- /row -->
+<script type="text/html" id="registerTemplate">
+<tr>
+	<td><span data-bind="text: no"></span></td>
+	<td><a data-bind="text: carPlate, attr: { href: urlDetail, title: carPlate }"></a></td>
+    <td><span data-bind="text: tranDate"></span></td>
+    <td><span data-bind="text: ic"></span></td>
+	<td><span data-bind="text: name"></span></td>
+	<td><span data-bind="text: address"></span></td>
+	<td><span data-bind="text: tel"></span></td>
+	<td><span data-bind="text: hp"></span></td>
+	<td><span data-bind="text: email"></span></td>
+	<td><span data-bind="text: tagNo"></span></td>
+	<td><span data-bind="text: tranCode"></span></td>
+</tr>
+</script>
+			
+<script type="text/javascript">
+	// search
+	function viewModel() {
+		var self = this;
+		
+		self.lineItems = ko.observableArray();
+		
+		self.addLineItem = function(dataRow) {
+			var lineItemDisplay = new LineItemDisplay();
+			lineItemDisplay.no = ko.observable(dataRow.no);
+			lineItemDisplay.carPlate = ko.observable(dataRow.carPlate);
+			lineItemDisplay.tranDate = ko.observable(dataRow.tranDate);
+			lineItemDisplay.ic = ko.observable(dataRow.ic);
+			lineItemDisplay.name = ko.observable(dataRow.name);
+			lineItemDisplay.address = ko.observable(dataRow.address);
+			lineItemDisplay.tel = ko.observable(dataRow.tel);
+			lineItemDisplay.hp = ko.observable(dataRow.hp);
+			lineItemDisplay.email = ko.observable(dataRow.email);
+			lineItemDisplay.tagNo = ko.observable(dataRow.tagNo);
+			lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
+			lineItemDisplay.urlDetail = ko.observable("/admin/register/car/detail/" + dataRow.carPlate + "/");
+			
+			self.lineItems.push(lineItemDisplay)
+		};
+
+	}
+	var vm = new viewModel();
+	
+	ko.applyBindings(vm);
+	
+	var LineItemDisplay = function() {
+		var self = this;
+		
+		self.no;
+		self.carPlate
+		self.tranDate;
+		self.ic;
+		self.name;
+		self.address;
+		self.tel;
+		self.hp;
+		self.email;
+		self.tagNo;
+		self.tranCode;
+		self.urlDetail;
+	};
+	
+	$("#btnSearch").click(function() {
+		search();
+	});
+	
+	function search() {
+		var postData = {
+				agentCode: "{{ register.agent_code }}"
+				};
+		
+		$.post("/admin/register/detail/{{ register.agent_code }}/", postData, function(data, textResult){
+			jsonData = JSON.parse(data);
+				
+			if(jsonData.returnStatus){
+				// jason data
+				vm.lineItems.removeAll();
+
+				for (var i = 0; i < jsonData.data.length; i++) {
+					var dataRow = jsonData.data[i];
+					dataRow["no"] = i+1;
+					vm.addLineItem(dataRow);
+				}
+			}
+			else{
+				$("#errorMessage").text(jsonData.returnMessage);
+			}
+		});
+	}
+	
+	$(document).ready(function() {
+		search();
+  	});
+</script>
+{% endblock %}
