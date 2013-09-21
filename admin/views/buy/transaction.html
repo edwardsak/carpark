@@ -1,10 +1,10 @@
 {% extends "base/base.html" %}
 
 {% block main %}
-<h2>{{ title }}</h2>
+<h2>{{ title }}</h2>>
 
 <div class="row">
-	<div class="col-lg-4">
+<div class="col-lg-4">
 	
 		<form action="" method="post">
 		<table>
@@ -21,7 +21,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Agent Code:</td>
+			<td>Agent ID:</td>
 			<td>
 				<input type="text" id="agentCode" />
 			</td>
@@ -33,36 +33,41 @@
 		<div style="display: inline;">
 			<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
 		</form>
 	</div>
-	
-	<div class="col-lg-8">
-		<form action="" method="post">
-			<table border="1" id="buylist">
-				<thead>
-				  <tr>
-				  	<th>Agent ID</th>
-				  	<th>Date</th>
-				    <th>Quantity</th>
-				    <th>Unit Price (RM)</th>
-				    <th>Sub Total</th>
-				    <th>Commission</th>
-				    <th>Amount</th>
-				    <th>Payment Date</th>
-				    <th>Ref. No</th>
-				    <th>Payment Type</th>
-				  </tr>
-				 </thead>
-				 <tbody data-bind="template: { name: 'agentTemplate', foreach: lineItems }"></tbody>
-			</table>	
-		</form>
-	</div>
+<div class="col-lg-8">
+	<form action="" method="post">
+		<table border="1" id="buylist">
+			<thead>
+			  <tr>
+			  	<th>No</th>
+			  	<th>Doc. No</th>
+			  	<th>Date</th>
+			  	<th>Agent Code</th>
+			    <th>Quantity</th>
+			    <th>Unit Price (RM)</th>
+			    <th>Sub Total</th>
+			    <th>Commission</th>
+			    <th>Amount</th>
+			    <th>Payment Date</th>
+			    <th>Ref. No</th>
+			    <th>Payment Type</th>
+			  </tr>
+			 </thead>
+			 <tbody data-bind="template: { name: 'buyTemplate', foreach: lineItems }"></tbody>
+		</table>	
+	</form>
+</div>
 </div> <!-- /row -->
-
-<script type="text/html" id="agentTemplate">
+<script type="text/html" id="buyTemplate">
 <tr>
-	<td><span data-bind="text: agentCode"></span></td>
+	<td><span data-bind="text: no"></span></td>
+	<td><span data-bind="text: tranCode"></span></td>
     <td><span data-bind="text: date"></span></td>
+	<td><span data-bind="text: agentCode"></span></td>
     <td><span data-bind="text: qty"></span></td>
 	<td><span data-bind="text: unitPrice"></span></td>
 	<td><span data-bind="text: subTotal"></span></td>
@@ -75,6 +80,17 @@
 </script>
 			
 <script type="text/javascript">
+	$("#btnClear").click(function() {
+		clear();
+	});
+	function clear(){
+		$("#dateFrom").val("");
+		$("#dateTo").val("");
+		$("#agentCode").val("");
+		$("#errorMessage").text("");
+		vm.lineItems.removeAll();
+	};
+
 	// search
 	function viewModel() {
 		var self = this;
@@ -83,8 +99,10 @@
 		
 		self.addLineItem = function(dataRow) {
 			var lineItemDisplay = new LineItemDisplay();
-			lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
+			lineItemDisplay.no = ko.observable(dataRow.no);
+			lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
 			lineItemDisplay.date = ko.observable(dataRow.date);
+			lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
 			lineItemDisplay.qty = ko.observable(dataRow.qty);
 			lineItemDisplay.unitPrice = ko.observable(dataRow.unitPrice);
 			lineItemDisplay.subTotal = ko.observable(dataRow.subTotal);
@@ -92,23 +110,26 @@
 			lineItemDisplay.amount = ko.observable(dataRow.amount);
 			lineItemDisplay.paymentDate = ko.observable(dataRow.paymentDate);
 			lineItemDisplay.refNo = ko.observable(dataRow.refNo);
-			lineItemDisplay.paymentType = ko.observable(dataRow.paymentType);
+			lineItemDisplay.paymentType = ko.observable(dataRow.paymentType);	
 			
 			self.lineItems.push(lineItemDisplay)
 		};
 		
 		self.addTotalLineItem = function(qty, subTotal, commission, amount) {
 			var lineItemDisplay = new LineItemDisplay();
-			lineItemDisplay.agentCode = ko.observable("");
+			lineItemDisplay.no = ko.observable("Total");
+			lineItemDisplay.tranCode = ko.observable("");
 			lineItemDisplay.date = ko.observable("");
+			lineItemDisplay.agentCode = ko.observable("");
 			lineItemDisplay.qty = ko.observable(qty);
-			lineItemDisplay.unitPrice = ko.observable(0);
+			lineItemDisplay.unitPrice = ko.observable("");
 			lineItemDisplay.subTotal = ko.observable(subTotal);
 			lineItemDisplay.commission = ko.observable(commission);
 			lineItemDisplay.amount = ko.observable(amount);
 			lineItemDisplay.paymentDate = ko.observable("");
 			lineItemDisplay.refNo = ko.observable("");
 			lineItemDisplay.paymentType = ko.observable("");
+			
 			
 			self.lineItems.push(lineItemDisplay)
 		};
@@ -120,8 +141,10 @@
 	var LineItemDisplay = function() {
 		var self = this;
 		
-		self.agentCode;
+		self.no;
+		self.tranCode;
 		self.date;
+		self.agentCode;
 		self.qty;
 		self.unitPrice;
 		self.subTotal;
@@ -144,7 +167,7 @@
 				agentCode: $("#agentCode").val(),
 				};
 		
-		$.post("/admin/reports/buybyagent/", postData, function(data, textResult){
+		$.post("/admin/transactions/buy/", postData, function(data, textResult){
 			jsonData = JSON.parse(data);
 				
 			if(jsonData.returnStatus){
@@ -153,15 +176,16 @@
 				
 				var qty = 0;
 				var subTotal = 0;
-				var comm = 0;
+				var commission = 0;
 				var sumAmount = 0;
 				for (var i = 0; i < jsonData.data.length; i++) {
 					var dataRow = jsonData.data[i];
+					dataRow["no"] = i+1;
 					vm.addLineItem(dataRow);
 					
 					qty += dataRow['qty'];
 					subTotal += dataRow['subTotal'];
-					comm += dataRow['commission'];
+					commission += dataRow['commission'];
 					sumAmount += dataRow['amount'];
 				}
 				vm.addTotalLineItem(qty, subTotal, commission, sumAmount);
@@ -172,20 +196,20 @@
 		});
 	}
 	
-  	$(function() {
-    	$( "#dateFrom" ).datepicker({
-    	    dateFormat: 'dd/mm/yy',
-    	    altField: '#thealtdate',
-    	    altFormat: 'yy-mm-dd'
-    	});
-  	});
-  	
-  	$(function() {
-    	$( "#dateTo" ).datepicker({
-    	    dateFormat: 'dd/mm/yy',
-    	    altField: '#thealtdate',
-    	    altFormat: 'yy-mm-dd'
-    	});
-  	});
+	$(function() {
+		$( "#dateFrom" ).datepicker({
+		    dateFormat: 'dd/mm/yy',
+		    altField: '#thealtdate',
+		    altFormat: 'yy-mm-dd'
+		});
+		});
+		
+	$(function() {
+		$( "#dateTo" ).datepicker({
+		    dateFormat: 'dd/mm/yy',
+		    altField: '#thealtdate',
+		    altFormat: 'yy-mm-dd'
+		});
+	});
 </script>
 {% endblock %}

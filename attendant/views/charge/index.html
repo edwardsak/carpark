@@ -42,6 +42,9 @@
 		<div style="display: inline;">
 			<input type="button" id="btnCharge" value="Charge" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
 		</form>
 	</div>
 	
@@ -51,6 +54,7 @@
 				<thead>
 				  <tr>
 				  	<th>Attendant ID</th>
+				  	<th>Doc. No</th>
 				  	<th>Date</th>
 				    <th>Lot No</th>
 				    <th>Car Plate</th>
@@ -66,6 +70,7 @@
 <script type="text/html" id="attendantTemplate">
 <tr>
 	<td><span data-bind="text: attendantCode"></span></td>
+	<td><span data-bind="text: tranCode"></span></td>
     <td><span data-bind="text: date"></span></td>
     <td><span data-bind="text: lotNo"></span></td>
 	<td><span data-bind="text: carPlate"></span></td>
@@ -78,6 +83,18 @@
 		window.location = "/attendant/charge/create/";
 	});
 	
+	$("#btnClear").click(function() {
+		clear();
+	});
+	function clear(){
+		$("#dateFrom").val("");
+		$("#dateTo").val("");
+		$("#lotNo").val("");
+		$("#carPlate").val("");
+		$("#errorMessage").text("");
+		vm.lineItems.removeAll();
+	};
+	
 	// search
 	function viewModel() {
 		var self = this;
@@ -87,6 +104,7 @@
 		self.addLineItem = function(dataRow) {
 			var lineItemDisplay = new LineItemDisplay();
 			lineItemDisplay.attendantCode = ko.observable(dataRow.attendantCode);
+			lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
 			lineItemDisplay.date = ko.observable(dataRow.date);
 			lineItemDisplay.lotNo = ko.observable(dataRow.lotNo);
 			lineItemDisplay.carPlate = ko.observable(dataRow.carPlate);
@@ -103,6 +121,7 @@
 		var self = this;
 		
 		self.attendantCode;
+		self.tranCode;
 		self.date;
 		self.lotNo;
 		self.carPlate;
@@ -110,16 +129,9 @@
 	};
 	
 	$("#btnSearch").click(function() {
+		vm.lineItems.removeAll();
 		search();
-		clear();
-		//document.forms[0].reset();
 	});
-	function clear(){
-		$("#dateFrom").val("");
-		$("#dateTo").val("");
-		$("#lotNo").val("");
-		
-	};
 	
 	function search() {
 		var postData = {

@@ -53,6 +53,15 @@
 </div>
 
 <script type="text/javascript">
+//Level
+var level = "{{ user.level }}";
+if (level = 2){
+	$("#level").text("Super User");
+}
+elif(level = 3){
+	$("#level").value("3");
+}
+
 //checking checkbox
 if (!$('#checkbox').is(':checked')){
 	$("#errorMessage").text("Must tick the Active checkbox");

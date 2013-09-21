@@ -10,10 +10,10 @@
 			<table border="1">
 				<thead>
 				  <tr>
+				  	<th>No</th>
 				  	<th>Car Reg. No</th>
 				    <th>Today Charge (RM)</th>
 				    <th>Balance (RM)</th>
-
 				  </tr>
 				 </thead>
 				 <tbody data-bind="template: { name: 'customerTemplate', foreach: lineItems }"></tbody>
@@ -27,6 +27,7 @@
 	
 <script type="text/html" id="customerTemplate">
 <tr>
+	<td><span data-bind="text: no"></span></td>
 	<td><a data-bind="text: carRegNo, attr: { href: urlDetail, title: carRegNo }"></a></td>
 	<td><span data-bind="text: chargeAmt"></span></td>
 	<td><span data-bind="text: balAmt"></span></td>
@@ -43,19 +44,22 @@ function viewModel() {
 	
 	self.addLineItem = function(dataRow) {
 		var lineItemDisplay = new LineItemDisplay();
+		lineItemDisplay.no = ko.observable(dataRow.no);
 		lineItemDisplay.carRegNo = ko.observable(dataRow.carRegNo);
 		lineItemDisplay.chargeAmt = ko.observable(dataRow.chargeAmt);
 		lineItemDisplay.balAmt = ko.observable(dataRow.balAmt);
 		lineItemDisplay.urlDetail = ko.observable("/customer/statement/" + dataRow.carRegNo + "/");
 		
 		self.lineItems.push(lineItemDisplay)
-		}
+		};
 	
 	self.addTotalLineItem = function(chargeAmt, balAmt) {
 		var lineItemDisplay = new LineItemDisplay();
+		lineItemDisplay.no = ko.observable("Total");
 		lineItemDisplay.carRegNo = ko.observable("");
 		lineItemDisplay.chargeAmt = ko.observable(chargeAmt);
 		lineItemDisplay.balAmt = ko.observable(balAmt);
+		lineItemDisplay.urlDetail = ko.observable("");
 		
 		self.lineItems.push(lineItemDisplay)
 		};
@@ -67,6 +71,7 @@ ko.applyBindings(vm);
 var LineItemDisplay = function() {
 	var self = this;
 	
+	self.no;
 	self.carRegNo;
 	self.chargeAmt;
 	self.balAmt;
@@ -90,6 +95,7 @@ function search() {
 				var balAmt = 0;
 				for (var i = 0; i < jsonData.data.length; i++) {
 					var dataRow = jsonData.data[i];
+					dataRow['no'] = i+1;
 					vm.addLineItem(dataRow);
 					
 					chargeAmt += dataRow['chargeAmt'];

@@ -1,0 +1,106 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2>{{ title }}</h2>
+
+<div class="row">
+	<div class="col-lg-4">
+	
+<form action="" method="post">
+	<input type="hidden" id="lastModified" value="{{ buy.last_modified }}"/>
+	<table>
+		<tr>
+			<td>Agent ID:</td>
+			<td>
+				<span>{{ buy.agent_code }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Date:</td>
+			<td>
+				<span>{{ buy.tran_date }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Quantity:</td>
+			<td>
+				<span>{{ buy.qty }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Unit Price (RM):</td>
+			<td>
+				<span>{{ buy.unit_price }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Sub Total (RM):</td>
+			<td>
+				<span>{{ buy.sub_total }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Commission (RM):</td>
+			<td>
+				<span>{{ buy.comm_amt }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Amount (RM):</td>
+			<td>
+				<span>{{ buy.amt }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Payment Date:</td>
+			<td>
+				<span>{{ buy.payment_date }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Ref. No:</td>
+			<td>
+				<span>{{ buy.payment_ref_no }}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>Tran Code:</td>
+			<td>
+				<span>{{ buy.tran_code }}</span>
+			</td>
+		</tr>
+	</table>
+	
+	<div>
+   		<span id="errorMessage" class="error"></span>
+   	</div>
+	<br>	
+	<div>
+		<input type="button" id="btnVoid" value="Void" />
+	</div>
+</form>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+$("#btnVoid").click(function(){
+	var postData = {
+			tranCode: "{{ buy.tran_code }}",
+			lastModified: $("#lastModified").val()
+	};
+
+	$.post("/agent/buy/void/{{ buy.tran_code }}/", postData, function(data, textResult) {
+		jsonData = JSON.parse(data);
+		
+		if (jsonData.returnStatus) {
+			window.location = "/agent/";
+		}
+		else {
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
+	});
+});
+</script>
+
+{% endblock %}

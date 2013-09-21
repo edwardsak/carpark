@@ -173,6 +173,7 @@ class Search(BaseHandler):
             for charge in charges:
                 data.append({
                              'attendantCode': charge.attendant_code,
+                             'tranCode': charge.tran_code,
                              'date': DateTime.to_date_string(charge.tran_date),
                              'lotNo': charge.lot_no,
                              'carPlate': charge.car_reg_no,

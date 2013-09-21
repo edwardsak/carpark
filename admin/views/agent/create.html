@@ -56,38 +56,54 @@
 	<div>
    		<span id="errorMessage" class="error"></span>
    	</div>
-	<br>	
-	<div>
-		<input type="button" id="btnCreate" value="Create" />
+	<div style="display: inline;">
+		<input type="button" id="btnCreate" value="Create" style="width:90px;height:40px; font-size: 20px;"/>
 	</div>
+	<div style="display: inline;">
+		<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+	</div>	
 </form>
 
 	</div>
 </div>
 	
 <script type="text/javascript">
-	$("#btnCreate").click(function(){
-		var postData = {
-				code: $("#code").val(),
-				name: $("#name").val(),
-				pwd: $("#pwd").val(),
-				address: $("#address").val(),
-				tel: $("#tel").val(),
-				hp: $("#hp").val(),
-				email: $("#email").val(),
-		};
-		
-		$.post("/admin/agent/create/", postData, function(data, textResult){
-			jsonData = JSON.parse(data);
-				
-			if(jsonData.returnStatus){
-				window.location = "/admin/agent/";
-			}
-			else{
-				$("#errorMessage").text(jsonData.returnMessage);
-			}
-		});
+$("#btnCreate").click(function(){
+	var postData = {
+			code: $("#code").val(),
+			name: $("#name").val(),
+			pwd: $("#pwd").val(),
+			address: $("#address").val(),
+			tel: $("#tel").val(),
+			hp: $("#hp").val(),
+			email: $("#email").val(),
+	};
 	
+	$.post("/admin/agent/create/", postData, function(data, textResult){
+		jsonData = JSON.parse(data);
+			
+		if(jsonData.returnStatus){
+			window.location = "/admin/agent/";
+		}
+		else{
+			$("#errorMessage").text(jsonData.returnMessage);
+		}
 	});
+
+});
+
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#code").val();
+	$("#name").val();
+	$("#pwd").val();
+	$("#address").val();
+	$("#tel").val();
+	$("#hp").val();
+	$("#email").val();
+	$("#errorMessage").text("");
+};
 </script>
 {% endblock %}

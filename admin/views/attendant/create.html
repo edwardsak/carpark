@@ -32,8 +32,11 @@
    		<span id="errorMessage" class="error"></span>
    	</div>
 	<br>	
-	<div>
-		<input type="button" id="btnCreate" value="Create" />
+	<div style="display: inline;">
+		<input type="button" id="btnCreate" value="Create" style="width:90px;height:40px; font-size: 20px;"/>
+	</div>
+	<div style="display: inline;">
+		<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
 	</div>
 </form>
 
@@ -60,5 +63,15 @@
 		});
 	
 	});
+	
+	$("#btnClear").click(function() {
+		clear();
+	});
+	function clear(){
+		$("#code").val("");
+		$("#name").val("");
+		$("#pwd").val("");
+		$("#errorMessage").text("");
+	};
 </script>
 {% endblock %}

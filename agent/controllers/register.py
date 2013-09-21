@@ -182,6 +182,7 @@ class Search(BaseHandler):
             for register in registers:
                 data.append({
                              'agentCode': register.agent_code,
+                             'tranCode': register.tran_code,
                              'date': DateTime.to_date_string(register.tran_date),
                              'carPlate': register.car_reg_no,
                              'name': register.customer_name,

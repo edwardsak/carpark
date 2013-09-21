@@ -2,20 +2,52 @@
 
 {% block main %}
 <h2>{{ title }}</h2>
-<br>
-<div id="container" style="height: 34px; width: 40%; border: 1px solid #333">
-	<span style="font-size: 22px; float: left; vertical-align: top;"> Agent ID: {{ register.agent_code }}</span>
-	<span style="font-size: 22px; float: right; vertical-align: top;"> Agent Name: {{ agent.name }}</span>
-</div>
-<br>
+
+<div class="row">
+<div class="col-lg-4">
+	
+		<form action="" method="post">
+		<table>
+		<tr>
+			<td>Date From:</td>
+			<td>
+				<input type="text" id="dateFrom" />
+			</td>
+		</tr>
+		<tr>
+			<td>Date To:</td>
+			<td>
+				<input type="text" id="dateTo" />
+			</td>
+		</tr>
+		<tr>
+			<td>Agent ID:</td>
+			<td>
+				<input type="text" id="agentCode" />
+			</td>
+		</tr>
+		</table>
+		<div>
+	   		<span id="errorMessage" class="error"></span>
+	   	</div>
+		<div style="display: inline;">
+			<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
+		</form>
+	</div>
 <div class="col-lg-8">
 	<form action="" method="post">
 		<table border="1" id="buylist">
 			<thead>
 			  <tr>
 			  	<th>No</th>
+			  	<th>Doc. No</th>
 			  	<th>Car Reg. No</th>
 			  	<th>Date</th>
+			  	<th>Agent Code</th>
 			    <th>IC/PP No</th>
 			    <th>Name</th>
 			    <th>Address</th>
@@ -23,7 +55,6 @@
 			    <th>Hp</th>
 			    <th>Email</th>
 			    <th>Tag No</th>
-			    <th>Doc. No</th>
 			  </tr>
 			 </thead>
 			 <tbody data-bind="template: { name: 'registerTemplate', foreach: lineItems }"></tbody>
@@ -34,8 +65,10 @@
 <script type="text/html" id="registerTemplate">
 <tr>
 	<td><span data-bind="text: no"></span></td>
-	<td><a data-bind="text: carPlate, attr: { href: urlDetail, title: carPlate }"></a></td>
+	<td><span data-bind="text: tranCode"></span></td>
+	<td><span data-bind="text: carPlate"></span></td>
     <td><span data-bind="text: tranDate"></span></td>
+	<td><span data-bind="text: agentCode"></span></td>
     <td><span data-bind="text: ic"></span></td>
 	<td><span data-bind="text: name"></span></td>
 	<td><span data-bind="text: address"></span></td>
@@ -43,7 +76,7 @@
 	<td><span data-bind="text: hp"></span></td>
 	<td><span data-bind="text: email"></span></td>
 	<td><span data-bind="text: tagNo"></span></td>
-	<td><span data-bind="text: tranCode"></span></td>
+	
 </tr>
 </script>
 			
@@ -57,8 +90,10 @@
 		self.addLineItem = function(dataRow) {
 			var lineItemDisplay = new LineItemDisplay();
 			lineItemDisplay.no = ko.observable(dataRow.no);
+			lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
 			lineItemDisplay.carPlate = ko.observable(dataRow.carPlate);
 			lineItemDisplay.tranDate = ko.observable(dataRow.tranDate);
+			lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
 			lineItemDisplay.ic = ko.observable(dataRow.ic);
 			lineItemDisplay.name = ko.observable(dataRow.name);
 			lineItemDisplay.address = ko.observable(dataRow.address);
@@ -67,7 +102,6 @@
 			lineItemDisplay.email = ko.observable(dataRow.email);
 			lineItemDisplay.tagNo = ko.observable(dataRow.tagNo);
 			lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
-			lineItemDisplay.urlDetail = ko.observable("/admin/register/car/detail/" + dataRow.carPlate + "/");
 			
 			self.lineItems.push(lineItemDisplay)
 		};
@@ -81,8 +115,10 @@
 		var self = this;
 		
 		self.no;
-		self.carPlate
+		self.tranCode;
+		self.carPlate;
 		self.tranDate;
+		self.agentCode;
 		self.ic;
 		self.name;
 		self.address;
@@ -90,8 +126,6 @@
 		self.hp;
 		self.email;
 		self.tagNo;
-		self.tranCode;
-		self.urlDetail;
 	};
 	
 	$("#btnSearch").click(function() {
@@ -100,10 +134,12 @@
 	
 	function search() {
 		var postData = {
-				agentCode: "{{ register.agent_code }}"
+				dateFrom: $("#dateFrom").val(),
+				dateTo: $("#dateTo").val(),
+				agentCode: $("#agentCode").val(),
 				};
 		
-		$.post("/admin/register/detail/{{ register.agent_code }}/", postData, function(data, textResult){
+		$.post("/admin/transactions/register/", postData, function(data, textResult){
 			jsonData = JSON.parse(data);
 				
 			if(jsonData.returnStatus){
@@ -122,8 +158,20 @@
 		});
 	}
 	
-	$(document).ready(function() {
-		search();
-  	});
+	$(function() {
+		$( "#dateFrom" ).datepicker({
+		    dateFormat: 'dd/mm/yy',
+		    altField: '#thealtdate',
+		    altFormat: 'yy-mm-dd'
+		});
+		});
+		
+	$(function() {
+		$( "#dateTo" ).datepicker({
+		    dateFormat: 'dd/mm/yy',
+		    altField: '#thealtdate',
+		    altFormat: 'yy-mm-dd'
+		});
+	});
 </script>
 {% endblock %}

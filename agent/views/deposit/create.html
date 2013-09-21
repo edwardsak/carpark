@@ -39,12 +39,14 @@
 		</tr>	
 	</table>
 	<div>
-		<input type="button" id="btnSave" value="Save" />
-	</div>
-	<div>
    		<span id="errorMessage" class="error"></span>
    	</div>
-	<br>	
+	<div style="display: inline;">
+		<input type="button" id="btnSave" value="Save" style="width:90px;height:40px; font-size: 20px;"/>
+	</div>
+	<div style="display: inline;">
+		<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+	</div>	
 	
 	</div> <!-- /classrow -->
 		
@@ -79,5 +81,16 @@ $("#btnSave").click(function(){
 	});
 
 });
+
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#date").val("");
+	$("#amt").val("");
+	$("#refNo").val("");
+	$("#paymentDate").val("");
+	$("#errorMessage").text("");
+};
 </script>
 {% endblock %}

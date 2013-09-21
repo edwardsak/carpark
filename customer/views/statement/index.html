@@ -76,6 +76,7 @@ var LineItemDisplay = function() {
 };
 
 $("#btnSearch").click(function() {
+	vm.lineItems.removeAll();
 	search();
 });
 

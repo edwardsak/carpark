@@ -21,6 +21,9 @@
 		<div style="display: inline;">
 			<input type="button" id="btnSearch" value="Search" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
 		</form>
 	</div>
 	
@@ -55,6 +58,15 @@
 </script>
 			
 <script type="text/javascript">
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#date").val("");
+	$("#errorMessage").text("");
+	vm.lineItems.removeAll();
+};
+
 // search
 function viewModel() {
 	var self = this;
@@ -89,6 +101,7 @@ var LineItemDisplay = function() {
 };
 
 $("#btnSearch").click(function() {
+	vm.lineItems.removeAll();
 	search();
 });
 
@@ -122,5 +135,14 @@ $(function() {
   	    altFormat: 'yy-mm-dd'
   	});
 });
+
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#date").val("");
+	$("#errorMessage").text("");
+	vm.lineItems.removeAll();
+};
 </script>
 {% endblock %}

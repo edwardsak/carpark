@@ -36,6 +36,9 @@
 		<div style="display: inline;">
 			<input type="button" id="btnTopup" value="Top Up" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
 		</form>
 	</div>
 	
@@ -47,6 +50,7 @@
 				  <tr>
 				  	<th>No</th>
 				  	<th>Agent ID</th>
+				  	<th>Doc. No</th>
 				  	<th>Date</th>
 				  	<th>Car Palte</th>
 				    <th>Sub Total</th>
@@ -64,6 +68,7 @@
 <tr>
 	<td><span data-bind="text: no"></span></td>
 	<td><span data-bind="text: agentCode"></span></td>
+	<td><span data-bind="text: tranCode"></span></td>
 	<td><span data-bind="text: date"></span></td>
     <td><span data-bind="text: carPlate"></span></td>
 	<td><span data-bind="text: subTotal"></span></td>
@@ -77,6 +82,17 @@ $("#btnTopup").click(function(){
 	window.location = "/agent/topup/create/";
 });
 
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#dateFrom").val("");
+	$("#dateTo").val("");
+	$("#carPlate").val("");
+	$("#errorMessage").text("");
+	vm.lineItems.removeAll();
+};
+
 // search
 function viewModel() {
 	var self = this;
@@ -87,6 +103,7 @@ function viewModel() {
 		var lineItemDisplay = new LineItemDisplay();
 		lineItemDisplay.no = ko.observable(dataRow.no);
 		lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
+		lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
 		lineItemDisplay.date = ko.observable(dataRow.date);
 		lineItemDisplay.carPlate = ko.observable(dataRow.carPlate);
 		lineItemDisplay.subTotal = ko.observable(dataRow.subTotal);
@@ -100,6 +117,7 @@ function viewModel() {
 		var lineItemDisplay = new LineItemDisplay();
 		lineItemDisplay.no = ko.observable("Total");
 		lineItemDisplay.agentCode = ko.observable("");
+		lineItemDisplay.tranCode = ko.observable("");
 		lineItemDisplay.date = ko.observable("");
 		lineItemDisplay.carPlate = ko.observable("");
 		lineItemDisplay.subTotal = ko.observable(subTotal);
@@ -118,6 +136,7 @@ var LineItemDisplay = function() {
 	
 	self.no;
 	self.agentCode;
+	self.tranCode;
 	self.date;
 	self.carPlate;
 	self.subTotal;
@@ -126,6 +145,7 @@ var LineItemDisplay = function() {
 };
 
 $("#btnSearch").click(function() {
+	vm.lineItems.removeAll();
 	search();
 });
 

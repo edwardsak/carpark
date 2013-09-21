@@ -155,16 +155,13 @@ class ResetPwd(BaseHandler):
             current_user = self.current_user()
             
             admin_id = self.request.get('adminId')
-            pwd = self.request.get('newPwd')
-            old_pwd = self.request.get('oldPwd')
       
             vm = UserViewModel()
             vm.code = current_user.code
-            vm.pwd = pwd
-            vm.old_pwd = old_pwd
+            vm.pwd = admin_id
             
             app_service = AccountAppService()
-            app_service.change_pwd(vm)
+            app_service.reset_pwd(vm)
             
             json_values['returnStatus'] = True
         except Exception, ex:

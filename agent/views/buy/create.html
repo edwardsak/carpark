@@ -53,8 +53,12 @@
 	<div>
 		<span id="errorMessage" class="error"></span>
 	</div>
-	<div>
-		<input type="button" id="btnSave" value="Save" />
+	</div>
+	<div style="display: inline;">
+		<input type="button" id="btnSave" value="Save" style="width:90px;height:40px; font-size: 20px;"/>
+	</div>
+	<div style="display: inline;">
+		<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
 	</div>
 </div> <!-- /class -->
 
@@ -98,5 +102,17 @@ $("#btnSave").click(function(){
 		}
 	});
 });
+
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#date").val("");
+	$("#quantity").val("");
+	$("#unitPrice").val("");
+	$("#amount").val("");
+	$("#refNo").val("");
+	$("#errorMessage").text("");
+};
 </script>
 {% endblock %}

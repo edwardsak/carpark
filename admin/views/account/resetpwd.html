@@ -14,18 +14,6 @@
 					<input type="text" id="adminId" />
 				</td>
 			</tr>
-			<tr>
-				<td>New Password:</td>
-				<td>
-					<input type="password" id="newPwd" />
-				</td>
-			</tr>
-			<tr>
-				<td>Confirm Password:</td>
-				<td>
-					<input type="password" id="confirmPwd" />
-				</td>
-			</tr>
 		</table>
 		
 		<div>
@@ -33,7 +21,7 @@
 	   	</div>
 		<br>	
 		<div>
-			<input type="button" id="btnChange" value="Change Password" />
+			<input type="button" id="btnReset" value="Reset Password" />
 		</div>
 	</form>
 
@@ -42,18 +30,10 @@
 
 	
 <script type="text/javascript">
-$("#btnChange").click(function(){
-	// new password must same with confirm password
-	if ($("#newPwd").val() != $("#confirmPwd").val()) {
-		$("#errorMessage").text("Password not same.");
-		return;
-	};
-	
+$("#btnReset").click(function(){
 	// save
 	var postData = {
 			adminId: $("#adminId").val(),
-			newPwd: $("#newPwd").val(),
-			oldPwd: $("#oldPwd").val(),
 	};
 	
 	$.post("/admin/account/resetpwd/", postData, function(data, textResult){

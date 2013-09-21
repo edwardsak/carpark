@@ -30,6 +30,9 @@
 		<div style="display: inline;">
 			<input type="button" id="btnBuy" value="Buy" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
 		</form>
 	</div>
 	
@@ -40,6 +43,7 @@
 				  <tr>
 				  	<th>No</th>
 				  	<th>Agent ID</th>
+				  	<th>Doc. No</th>
 				  	<th>Date</th>
 				    <th>Quantity</th>
 				    <th>Unit Price (RM)</th>
@@ -61,6 +65,7 @@
 <tr>
 	<td><span data-bind="text: no"></span></td>
 	<td><span data-bind="text: agentCode"></span></td>
+	<td><a data-bind="text: tranCode, attr: { href: urlDetail, title: tranCode }"></a></td>
     <td><span data-bind="text: date"></span></td>
     <td><span data-bind="text: qty"></span></td>
 	<td><span data-bind="text: unitPrice"></span></td>
@@ -70,6 +75,7 @@
 	<td><span data-bind="text: paymentDate"></span></td>
 	<td><span data-bind="text: refNo"></span></td>
 	<td><span data-bind="text: paymentType"></span></td>
+	
 </tr>
 </script>
 			
@@ -77,6 +83,16 @@
 	$("#btnBuy").click(function(){
 		window.location = "/agent/buy/create/";
 	});
+	
+	$("#btnClear").click(function() {
+		clear();
+	});
+	function clear(){
+		$("#dateFrom").val("");
+		$("#dateTo").val("");
+		$("#errorMessage").text("");
+		vm.lineItems.removeAll();
+	};
 	
 	// search
 	function viewModel() {
@@ -88,6 +104,7 @@
 			var lineItemDisplay = new LineItemDisplay();
 			lineItemDisplay.no = ko.observable(dataRow.no);
 			lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
+			lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
 			lineItemDisplay.date = ko.observable(dataRow.date);
 			lineItemDisplay.qty = ko.observable(dataRow.qty);
 			lineItemDisplay.unitPrice = ko.observable(dataRow.unitPrice);
@@ -97,6 +114,7 @@
 			lineItemDisplay.paymentDate = ko.observable(dataRow.paymentDate);
 			lineItemDisplay.refNo = ko.observable(dataRow.refNo);
 			lineItemDisplay.paymentType = ko.observable(dataRow.paymentType);
+			lineItemDisplay.urlDetail = ko.observable("/agent/buy/void/" + dataRow.tranCode + "/");
 			
 			self.lineItems.push(lineItemDisplay)
 		};
@@ -105,6 +123,7 @@
 			var lineItemDisplay = new LineItemDisplay();
 			lineItemDisplay.no = ko.observable("Total");
 			lineItemDisplay.agentCode = ko.observable("");
+			lineItemDisplay.tranCode = ko.observable("");
 			lineItemDisplay.date = ko.observable("");
 			lineItemDisplay.qty = ko.observable(qty);
 			lineItemDisplay.unitPrice = ko.observable("");
@@ -127,6 +146,7 @@
 		
 		self.no;
 		self.agentCode;
+		self.tranCode;
 		self.date;
 		self.qty;
 		self.unitPrice;
@@ -136,11 +156,18 @@
 		self.paymentDate;
 		self.refNo;
 		self.paymentType;
+		self.urlDetail;
 	};
 	
 	$("#btnSearch").click(function() {
+		vm.lineItems.removeAll();
 		search();
 	});
+	
+	function clear(){
+		$("#dateFrom").val("");
+		$("#dateTo").val("");
+	}
 	
 	function search() {
 		var postData = {

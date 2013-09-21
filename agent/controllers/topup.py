@@ -173,6 +173,7 @@ class Search(BaseHandler):
             for topUp in topUps:
                 data.append({
                              'agentCode': topUp.agent_code,
+                             'tranCode': topUp.tran_code,
                              'carPlate': topUp.car_reg_no,
                              'date': DateTime.to_date_string(topUp.tran_date),
                              'subTotal': topUp.sub_total,

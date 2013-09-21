@@ -1,8 +1,6 @@
 from customer.controllers.base import BaseHandler
 from sharelib.utils import DateTime
-from datalayer.models.models import Customer
-from datalayer.models.models import Car
-from datalayer.models.models import Charge
+from datalayer.models.models import Car, Charge
 
 import os
 import jinja2
@@ -86,6 +84,54 @@ class Balance(BaseHandler):
 
             json_values['returnStatus'] = True
             json_values['data'] = data
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
+            
+        jsonStr = json.dumps(json_values)
+        self.response.out.write(jsonStr);
+        
+class ChargeSum(BaseHandler):
+    def get(self):
+        # validate customer is logined or not
+        # if not redirect to login page
+        if self.authenticate() == False:
+            return
+        
+        current_customer = self.current_customer()
+        
+        template_values = {
+                           'title': 'Today Charge',
+                           'current_customer': current_customer,
+                           'returnStatus': True,
+                           }
+        
+        template = JINJA_ENVIRONMENT.get_template('home/chargesum.html')
+        self.response.write(template.render(template_values))
+        
+    def post(self):
+        json_values = {}
+        
+        try:
+            ic = self.request.get('ic')
+            today_date = DateTime.malaysia_today()
+
+            
+            cars = Car.query(Car.customer_ic==ic,
+                             Car.active==True).fetch()    
+            
+            # create json
+            charge_amt = 0;
+            for car in cars:
+                charges = Charge.query(Charge.car_reg_no==car.reg_no,
+                                       Charge.tran_date==today_date,
+                                       Charge.void==False).fetch()
+                
+                for charge in charges:
+                    charge_amt += charge.sub_total
+
+            json_values['returnStatus'] = True
+            json_values['chargeAmt'] = charge_amt
         except Exception, ex:
             json_values['returnStatus'] = False
             json_values['returnMessage'] = str(ex)

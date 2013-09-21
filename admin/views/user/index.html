@@ -30,6 +30,9 @@
 		<div style="display: inline;">
 			<input type="button" id="btnCreate" value="Create" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
 		</form>
 	</div>
 	
@@ -67,6 +70,16 @@
 $("#btnCreate").click(function(){
 		window.location = "/admin/user/create/";
 	});
+	
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#code").val("");
+	$("#name").val("");
+	$("#errorMessage").text("");
+	vm.lineItems.removeAll();
+};
 
 	// search
 	function viewModel() {
@@ -106,6 +119,7 @@ $("#btnCreate").click(function(){
 	};
 	
 	$("#btnSearch").click(function() {
+		vm.lineItems.removeAll();
 		search();
 	});
 	

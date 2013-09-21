@@ -30,6 +30,9 @@
 		<div style="display: inline;">
 			<input type="button" id="btnDeposit" value="Deposit" style="width:90px;height:40px; font-size: 20px;"/>
 		</div>
+		<div style="display: inline;">
+			<input type="button" id="btnClear" value="Clear" style="width:90px;height:40px; font-size: 20px;"/>
+		</div>
 		</form>
 	</div>
 	
@@ -40,6 +43,7 @@
 				  <tr>
 				  	<th>No</th>
 				  	<th>Agent ID</th>
+				  	<th>Doc. No</th>
 				  	<th>Date</th>
 				    <th>Amount</th>
 				    <th>Payment Date</th>
@@ -57,6 +61,7 @@
 <tr>
 	<td><span data-bind="text: no"></span></td>
 	<td><span data-bind="text: agentCode"></span></td>
+	<td><span data-bind="text: tranCode"></span></td>
     <td><span data-bind="text: date"></span></td>
 	<td><span data-bind="text: amount"></span></td>
 	<td><span data-bind="text: paymentDate"></span></td>
@@ -70,6 +75,16 @@ $("#btnDeposit").click(function(){
 	window.location = "/agent/deposit/create/";
 	});
 
+$("#btnClear").click(function() {
+	clear();
+});
+function clear(){
+	$("#dateFrom").val("");
+	$("#dateTo").val("");
+	$("#errorMessage").text("");
+	vm.lineItems.removeAll();
+};
+
 // search
 function viewModel() {
 	var self = this;
@@ -80,11 +95,13 @@ function viewModel() {
 		var lineItemDisplay = new LineItemDisplay();
 		lineItemDisplay.no = ko.observable(dataRow.no);
 		lineItemDisplay.agentCode = ko.observable(dataRow.agentCode);
+		lineItemDisplay.tranCode = ko.observable(dataRow.tranCode);
 		lineItemDisplay.date = ko.observable(dataRow.date);
 		lineItemDisplay.amount = ko.observable(dataRow.amount);
 		lineItemDisplay.paymentDate = ko.observable(dataRow.paymentDate);
 		lineItemDisplay.refNo = ko.observable(dataRow.refNo);
 		lineItemDisplay.paymentType = ko.observable(dataRow.paymentType);
+		
 		
 		self.lineItems.push(lineItemDisplay)
 		};
@@ -93,6 +110,7 @@ function viewModel() {
 		var lineItemDisplay = new LineItemDisplay();
 		lineItemDisplay.no = ko.observable("Total");
 		lineItemDisplay.agentCode = ko.observable("");
+		lineItemDisplay.tranCode = ko.observable("");
 		lineItemDisplay.date = ko.observable("");
 		lineItemDisplay.amount = ko.observable(amount);
 		lineItemDisplay.paymentDate = ko.observable("");
@@ -111,6 +129,7 @@ function viewModel() {
 		
 		self.no;
 		self.agentCode;
+		self.tranCode;
 		self.date;
 		self.amount;
 		self.paymentDate;
@@ -119,6 +138,7 @@ function viewModel() {
 	};
 
 $("#btnSearch").click(function() {
+	vm.lineItems.removeAll();
 	search();
 	});
 

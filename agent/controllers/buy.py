@@ -173,6 +173,7 @@ class Search(BaseHandler):
             for buy in buys:
                 data.append({
                              'agentCode': buy.agent_code,
+                             'tranCode': buy.tran_code,
                              'date': DateTime.to_date_string(buy.tran_date),
                              'qty': buy.qty,
                              'unitPrice': buy.unit_price,
@@ -181,7 +182,7 @@ class Search(BaseHandler):
                              'amount': buy.amt,
                              'paymentDate': DateTime.to_date_string(buy.payment_date),
                              'refNo': buy.payment_ref_no,
-                             'paymentType': buy.payment_type
+                             'paymentType': buy.payment_type,
                              })
 
             json_values['returnStatus'] = True
@@ -212,3 +213,58 @@ class Receipt(BaseHandler):
         
         template = JINJA_ENVIRONMENT.get_template('buy/receipt.html')
         self.response.write(template.render(template_values))
+        
+class Void(BaseHandler):
+    def get(self, code):
+        # validate admin is logined or not
+        # if not redirect to login page
+        if self.authenticate() == False:
+            return
+        
+        current_agent = self.current_agent()
+        
+        buy = Buy.query(Buy.tran_code==code).get()
+        
+        template_values = {
+                           'title': 'Void Buy',
+                           'current_agent': current_agent,
+                           'buy': buy
+                           } 
+        
+        template = JINJA_ENVIRONMENT.get_template('buy/void.html')
+        self.response.write(template.render(template_values))
+        
+    def post(self, code):
+        json_values = {}
+        
+        try:
+            tran_code = self.request.get('tranCode')
+            last_modified = self.request.get('lastModified')
+            
+            buy = Buy.query(Buy.tran_code==tran_code).get()
+            
+            data = buy
+            data.agent_code = buy.agent_code
+            data.tran_date = buy.tran_date
+            data.qty = buy.qty
+            data.unit_price = buy.unit_price
+            data.sub_total = buy.sub_total
+            data.comm_per = buy.comm_per
+            data.comm_amt = buy.comm_amt
+            data.amt = buy.amt
+            data.payment_date = buy.payment_date
+            data.payment_ref_no = buy.payment_ref_no
+            data.payment_type = buy.payment_type
+            data.tran_code = buy.tran_code
+            data.void = True
+            data.last_modified = last_modified
+
+            data.put()
+        
+            json_values['returnStatus'] = True
+        except Exception, ex:
+            json_values['returnStatus'] = False
+            json_values['returnMessage'] = str(ex)
+        
+        json_str = json.dumps(json_values)
+        self.response.out.write(json_str)

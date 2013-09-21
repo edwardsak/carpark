@@ -169,11 +169,12 @@ class Search(BaseHandler):
             for deposit in deposits:
                 data.append({
                              'agentCode': deposit.agent_code,
+                             'tranCode': deposit.tran_code,
                              'date': DateTime.to_date_string(deposit.tran_date),
                              'amount': deposit.amt,
                              'paymentDate': DateTime.to_date_string(deposit.payment_date),
                              'refNo': deposit.payment_ref_no,
-                             'paymentType': deposit.payment_type
+                             'paymentType': deposit.payment_type,
                              })
                 
             json_values['returnStatus'] = True

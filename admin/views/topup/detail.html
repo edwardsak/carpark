@@ -19,7 +19,7 @@
 			    <th>Sub Total</th>
 			    <th>Commission</th>
 			    <th>Amount</th>
-			    <th>Tran Code</th>
+			    <th>Doc. No</th>
 			  </tr>
 			 </thead>
 			 <tbody data-bind="template: { name: 'topupTemplate', foreach: lineItems }"></tbody>
@@ -105,7 +105,7 @@
 				vm.lineItems.removeAll();
 				
 				var subTotal = 0;
-				var comm = 0;
+				var commission = 0;
 				var sumAmount = 0;
 				for (var i = 0; i < jsonData.data.length; i++) {
 					var dataRow = jsonData.data[i];
@@ -113,7 +113,7 @@
 					vm.addLineItem(dataRow);
 					
 					subTotal += dataRow['subTotal'];
-					comm += dataRow['commission'];
+					commission += dataRow['commission'];
 					sumAmount += dataRow['amount'];
 				}
 				vm.addTotalLineItem(subTotal, commission, sumAmount);
